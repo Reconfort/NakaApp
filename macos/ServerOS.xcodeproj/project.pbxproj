@@ -1,0 +1,449 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3548E2D99901249CD80BBE56 /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = 882FD508DE64BCA66C3B1AD6 /* NIOCore */; };
+		6D515C4C8214309267FDA7B4 /* NIOPosix in Frameworks */ = {isa = PBXBuildFile; productRef = A4AD63409D777E65E01EE48C /* NIOPosix */; };
+		B3466F536C4276B9FCE8B895 /* NIOSSH in Frameworks */ = {isa = PBXBuildFile; productRef = 4FBEEDCF2CC1EE69AFAB5612 /* NIOSSH */; };
+		D539459DDD51F3C43E019F5F /* Crypto in Frameworks */ = {isa = PBXBuildFile; productRef = CA76ACA17B039BEAE44C44CD /* Crypto */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		51E2CDE52F44D3F7FACC20CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 244210E48437B6556980A702 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AC44A5EE06496B21A17CA082;
+			remoteInfo = ServerOS;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		00444E2C37DD529B70E931A2 /* ServerOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ServerOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		763D774377779C412BB71F6F /* ServerOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ServerOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		2493E857D7F950EF7D39D34F /* ServerOSTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ServerOSTests;
+			sourceTree = "<group>";
+		};
+		C2B3202A96398CC88C81A732 /* ServerOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ServerOS;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		210F6348CD25DB2314AC0E7B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3548E2D99901249CD80BBE56 /* NIOCore in Frameworks */,
+				6D515C4C8214309267FDA7B4 /* NIOPosix in Frameworks */,
+				B3466F536C4276B9FCE8B895 /* NIOSSH in Frameworks */,
+				D539459DDD51F3C43E019F5F /* Crypto in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		634ADFD14DF951C39651F3B1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0035FE99EA2940F7FA633A58 = {
+			isa = PBXGroup;
+			children = (
+				C2B3202A96398CC88C81A732 /* ServerOS */,
+				2493E857D7F950EF7D39D34F /* ServerOSTests */,
+				5BAB63C60BF318DAB40A4F04 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5BAB63C60BF318DAB40A4F04 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				763D774377779C412BB71F6F /* ServerOS.app */,
+				00444E2C37DD529B70E931A2 /* ServerOSTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3A0C9CEF9D8F3BC090274361 /* ServerOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC086E470C1C75430B442AB0 /* Build configuration list for PBXNativeTarget "ServerOSTests" */;
+			buildPhases = (
+				63B11509FFE034F9B7DCFDE1 /* Sources */,
+				634ADFD14DF951C39651F3B1 /* Frameworks */,
+				1D766C4B1C82DADF3649E06A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9D38BE35321CDD12F308F817 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				2493E857D7F950EF7D39D34F /* ServerOSTests */,
+			);
+			name = ServerOSTests;
+			productName = ServerOSTests;
+			productReference = 00444E2C37DD529B70E931A2 /* ServerOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		AC44A5EE06496B21A17CA082 /* ServerOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 671B466153DB183FE9E409BE /* Build configuration list for PBXNativeTarget "ServerOS" */;
+			buildPhases = (
+				7F4B88C9E71472B3D3C41817 /* Sources */,
+				210F6348CD25DB2314AC0E7B /* Frameworks */,
+				E9D4223CABCA27B5ED1EC210 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C2B3202A96398CC88C81A732 /* ServerOS */,
+			);
+			name = ServerOS;
+			packageProductDependencies = (
+				882FD508DE64BCA66C3B1AD6 /* NIOCore */,
+				A4AD63409D777E65E01EE48C /* NIOPosix */,
+				4FBEEDCF2CC1EE69AFAB5612 /* NIOSSH */,
+				CA76ACA17B039BEAE44C44CD /* Crypto */,
+			);
+			productName = ServerOS;
+			productReference = 763D774377779C412BB71F6F /* ServerOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		244210E48437B6556980A702 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					3A0C9CEF9D8F3BC090274361 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = AC44A5EE06496B21A17CA082;
+					};
+					AC44A5EE06496B21A17CA082 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = 4AA05EC3301949773ED0AC0A /* Build configuration list for PBXProject "ServerOS" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0035FE99EA2940F7FA633A58;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D8DA73D421E23B5A7D2727BA /* XCRemoteSwiftPackageReference "swift-nio" */,
+				C9A69B45AC86AEF5ADE038A8 /* XCRemoteSwiftPackageReference "swift-nio-ssh" */,
+				D9B1F54CE13F84C38150B169 /* XCRemoteSwiftPackageReference "swift-crypto" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 5BAB63C60BF318DAB40A4F04 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AC44A5EE06496B21A17CA082 /* ServerOS */,
+				3A0C9CEF9D8F3BC090274361 /* ServerOSTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1D766C4B1C82DADF3649E06A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9D4223CABCA27B5ED1EC210 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		63B11509FFE034F9B7DCFDE1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F4B88C9E71472B3D3C41817 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9D38BE35321CDD12F308F817 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AC44A5EE06496B21A17CA082 /* ServerOS */;
+			targetProxy = 51E2CDE52F44D3F7FACC20CA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0B0C687DF8B6B8DC790B519C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1B104479E55E37CF8A63CBDF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ServerOS/Resources/ServerOS.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ServerOS/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.orionsystems.ServerOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+		73EBF6644258C120893E685D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B00CCDD09424E369308D67FA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ServerOS/Resources/ServerOS.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ServerOS/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.orionsystems.ServerOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		DD3F495F7D6A5AA1C1769021 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.orionsystems.ServerOS.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ServerOS.app/Contents/MacOS/ServerOS";
+			};
+			name = Debug;
+		};
+		E670BC2FFE794172EBC92AE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.orionsystems.ServerOS.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ServerOS.app/Contents/MacOS/ServerOS";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4AA05EC3301949773ED0AC0A /* Build configuration list for PBXProject "ServerOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				73EBF6644258C120893E685D /* Debug */,
+				0B0C687DF8B6B8DC790B519C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		671B466153DB183FE9E409BE /* Build configuration list for PBXNativeTarget "ServerOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B00CCDD09424E369308D67FA /* Debug */,
+				1B104479E55E37CF8A63CBDF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC086E470C1C75430B442AB0 /* Build configuration list for PBXNativeTarget "ServerOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD3F495F7D6A5AA1C1769021 /* Debug */,
+				E670BC2FFE794172EBC92AE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C9A69B45AC86AEF5ADE038A8 /* XCRemoteSwiftPackageReference "swift-nio-ssh" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-nio-ssh.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.15.0;
+			};
+		};
+		D8DA73D421E23B5A7D2727BA /* XCRemoteSwiftPackageReference "swift-nio" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-nio.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.102.0;
+			};
+		};
+		D9B1F54CE13F84C38150B169 /* XCRemoteSwiftPackageReference "swift-crypto" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-crypto.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4FBEEDCF2CC1EE69AFAB5612 /* NIOSSH */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C9A69B45AC86AEF5ADE038A8 /* XCRemoteSwiftPackageReference "swift-nio-ssh" */;
+			productName = NIOSSH;
+		};
+		882FD508DE64BCA66C3B1AD6 /* NIOCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8DA73D421E23B5A7D2727BA /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOCore;
+		};
+		A4AD63409D777E65E01EE48C /* NIOPosix */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8DA73D421E23B5A7D2727BA /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOPosix;
+		};
+		CA76ACA17B039BEAE44C44CD /* Crypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D9B1F54CE13F84C38150B169 /* XCRemoteSwiftPackageReference "swift-crypto" */;
+			productName = Crypto;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 244210E48437B6556980A702 /* Project object */;
+}

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- App Sandbox. Required for Mac App Store distribution, and the right
+	     default regardless: ServerOS handles credentials for production
+	     infrastructure and should hold the smallest possible set of rights. -->
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+
+	<!-- Outgoing connections only: SSH to the user's servers, and the
+	     loopback port that SSH forwards. ServerOS never listens. -->
+	<key>com.apple.security.network.client</key>
+	<true/>
+
+	<!-- Files the user explicitly picks: an SSH private key to import, a
+	     file to upload, a log to save. Read-write because uploads and
+	     downloads go both ways. Access beyond the picked file is obtained
+	     through security-scoped bookmarks, not by widening this. -->
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+
+	<!-- Keychain access group, so server credentials are stored under one
+	     identity and can be removed as a set. -->
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)com.orionsystems.ServerOS</string>
+	</array>
+</dict>
+</plist>

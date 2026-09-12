@@ -1,0 +1,59 @@
+# Local dependencies for the ServerOS control plane.
+#
+#   docker compose up -d
+#   npx prisma migrate dev
+#   npm run start:dev
+#
+# Both services bind to 127.0.0.1 only. Binding to 0.0.0.0 — the Compose
+# default for a published port — would put a Postgres with a development
+# password on every interface of the developer's machine, which on a café
+# network is a real exposure and not a theoretical one.
+
+name: serveros-control-plane
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: serveros
+      POSTGRES_PASSWORD: serveros
+      POSTGRES_DB: serveros
+      # Deterministic collation, so index ordering matches production rather
+      # than the host's locale.
+      POSTGRES_INITDB_ARGS: '--locale=C --encoding=UTF8'
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # `-U serveros -d serveros` rather than a bare pg_isready: the bare form
+      # reports ready while the init scripts are still creating the database,
+      # and `depends_on` then starts the app against a database that is not
+      # there yet.
+      test: ['CMD-SHELL', 'pg_isready -U serveros -d serveros']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    # No persistence: everything here is event fan-out and short-lived cache.
+    # Losing it on restart is correct, and an unexpected dump file is not.
+    command: ['redis-server', '--save', '', '--appendonly', 'no']
+    ports:
+      - '127.0.0.1:6379:6379'
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  postgres-data:
+  redis-data:

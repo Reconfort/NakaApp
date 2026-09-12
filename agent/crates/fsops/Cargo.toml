@@ -1,0 +1,14 @@
+[package]
+name = "serveros-fsops"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[lib]
+name = "serveros_fsops"
+path = "src/lib.rs"
+
+[dependencies]
+serveros-json = { path = "../json" }

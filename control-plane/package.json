@@ -1,0 +1,45 @@
+{
+  "name": "@serveros/control-plane",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ServerOS control plane — identity, server registry, enrollment, projects, activity and events.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "build": "prisma generate && nest build",
+    "start": "node dist/main.js",
+    "start:dev": "nest start --watch",
+    "test": "bash scripts/test.sh",
+    "test:logic": "bash scripts/test.sh",
+    "typecheck": "tsc -p tsconfig.json",
+    "typecheck:logic": "tsc -p tsconfig.logic.json",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@nestjs/common": "12.0.1",
+    "@nestjs/config": "12.0.0",
+    "@nestjs/core": "12.0.1",
+    "@nestjs/platform-express": "12.0.1",
+    "@nestjs/platform-socket.io": "12.0.1",
+    "@nestjs/websockets": "12.0.1",
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
+    "argon2": "0.45.1",
+    "dotenv": "17.2.3",
+    "ioredis": "5.11.1",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.1",
+    "socket.io": "4.8.1",
+    "zod": "4.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.9.2",
+    "prisma": "7.10.0",
+    "typescript": "6.0.3"
+  }
+}

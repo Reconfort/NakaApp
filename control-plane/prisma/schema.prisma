@@ -1,0 +1,272 @@
+// ServerOS control plane schema.
+//
+// Prisma 7 conventions (docs/reference/backend-stack.md §2.3) — do not "fix"
+// these back to the 2024 shape:
+//   * provider is `prisma-client`, not the deprecated `prisma-client-js`
+//   * `output` is required; there is no implicit node_modules/.prisma target
+//   * `url` has moved out of `datasource` and lives in prisma.config.ts
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Identity
+// ---------------------------------------------------------------------------
+
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  // Stored already normalised (trimmed + lower-cased) by
+  // users/users.logic.ts#normaliseEmail. Postgres `citext` would work too, but
+  // normalising in code keeps the invariant visible and testable, and keeps the
+  // migration free of an extension the database owner may not be able to create.
+  email        String    @unique
+  passwordHash String
+  name         String
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  sessions   Session[]
+  servers    Server[]
+  apiKeys    ApiKey[]
+  activities Activity[]
+
+  @@index([createdAt])
+}
+
+/// One refresh-token family. A row is a single *rotation* of that family: on
+/// use it is marked rotated and a successor row is written with the same
+/// `familyId`. Presenting an already-rotated or revoked row is treated as theft
+/// and revokes every row in the family (auth/session.logic.ts).
+model Session {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @db.Uuid
+  /// Groups every rotation descended from one login.
+  familyId         String    @db.Uuid
+  /// SHA-256 of the opaque refresh token. The token itself is never stored —
+  /// it is 256 bits of entropy, so a fast hash is sufficient and a slow one
+  /// (argon2) would only add latency to every refresh.
+  refreshTokenHash String    @unique
+  issuedAt         DateTime  @default(now())
+  expiresAt        DateTime
+  rotatedAt        DateTime?
+  revokedAt        DateTime?
+  /// Why the row was revoked — e.g. "rotated", "reuse_detected", "logout".
+  revokedReason    String?
+  userAgent        String?
+  ip               String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([familyId])
+  @@index([expiresAt])
+}
+
+/// A long-lived programmatic credential (CI, scripts). Only the hash is stored.
+model ApiKey {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @db.Uuid
+  name       String
+  /// Non-secret leading characters, shown in the UI so a key can be recognised.
+  prefix     String
+  /// SHA-256 of the full key. The key is shown to the user exactly once.
+  keyHash    String    @unique
+  scopes     String[]  @default([])
+  lastUsedAt DateTime?
+  expiresAt  DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ---------------------------------------------------------------------------
+// Server registry
+// ---------------------------------------------------------------------------
+
+enum ServerStatus {
+  PENDING
+  CONNECTED
+  DEGRADED
+  OFFLINE
+  UNREACHABLE
+}
+
+/// A Linux machine the user has registered.
+///
+/// ARCHITECTURAL DECISION — THIS MODEL HOLDS NO CREDENTIALS, DELIBERATELY.
+/// There is no privateKey, no password, no agentToken, no passphrase column,
+/// and none may be added. SSH private keys and the agent's shared secret live
+/// only in the user's macOS Keychain; the Mac app connects to the agent
+/// directly over an SSH-forwarded channel and the control plane never sits in
+/// that path. Consequences we are buying on purpose:
+///   * a full compromise of this database cannot be turned into shell access
+///   * the control plane cannot act on a server on its own behalf
+///   * "log in from a new Mac" means re-adding the key, not a server-side copy
+/// `hostKeyFingerprint` below is the *server's public* host key fingerprint —
+/// public by nature, and stored so the app can detect a changed host key.
+model Server {
+  id                 String       @id @default(uuid()) @db.Uuid
+  ownerId            String       @db.Uuid
+  name               String
+  hostname           String
+  sshPort            Int          @default(22)
+  sshUsername        String
+  /// Reported by the agent at enrollment, e.g. "Ubuntu 24.04".
+  os                 String?
+  /// Reported by the agent, e.g. "x86_64", "aarch64".
+  arch               String?
+  status             ServerStatus @default(PENDING)
+  agentVersion       String?
+  agentPort          Int          @default(9443)
+  lastSeenAt         DateTime?
+  /// The server's SSH *public* host key fingerprint, "SHA256:<base64>".
+  /// Public data. Kept so a changed host key can be surfaced as a warning.
+  hostKeyFingerprint String?
+  tags               String[]     @default([])
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  owner       User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  enrollments ServerEnrollment[]
+  projects    Project[]
+  activities  Activity[]
+
+  @@unique([ownerId, name])
+  @@index([ownerId])
+  @@index([status])
+  @@index([lastSeenAt])
+}
+
+/// A one-time code that lets an agent claim its Server row.
+///
+/// Only `codeHash` is stored. The plaintext code is returned by the mint
+/// endpoint once and is not recoverable afterwards, so a database leak yields
+/// no usable enrollment code.
+model ServerEnrollment {
+  id          String    @id @default(uuid()) @db.Uuid
+  serverId    String    @db.Uuid
+  /// SHA-256 of the canonical (ungrouped, upper-case) code.
+  codeHash    String    @unique
+  expiresAt   DateTime
+  consumedAt  DateTime?
+  /// IP that requested the code, for the audit trail.
+  createdByIp String?
+  /// IP that redeemed it, written at consume time.
+  consumedByIp String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  @@index([serverId])
+  @@index([expiresAt])
+}
+
+// ---------------------------------------------------------------------------
+// Projects
+// ---------------------------------------------------------------------------
+
+/// An application deployed on a server — usually a docker compose project.
+model Project {
+  id             String   @id @default(uuid()) @db.Uuid
+  serverId       String   @db.Uuid
+  name           String
+  /// The `com.docker.compose.project` label, when this project is compose-based.
+  composeProject String?
+  workingDir     String?
+  description    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  @@unique([serverId, name])
+  @@index([serverId])
+}
+
+// ---------------------------------------------------------------------------
+// Activity and audit
+// ---------------------------------------------------------------------------
+
+enum ActivityResult {
+  SUCCEEDED
+  FAILED
+}
+
+/// The user-facing feed: "Docker container restarted · Production · 4 min ago".
+///
+/// Append-only. There is no update path and no delete path in the application;
+/// PrismaService installs a client extension that refuses mutations other than
+/// create on this model.
+model Activity {
+  id           String         @id @default(uuid()) @db.Uuid
+  serverId     String?        @db.Uuid
+  userId       String?        @db.Uuid
+  /// Dotted event name, e.g. "docker.container.restart".
+  kind         String
+  resourceType String
+  resourceId   String?
+  /// One human sentence, already rendered — the UI does not template this.
+  summary      String
+  /// Passed through activity/redaction.logic.ts before it is written.
+  metadata     Json           @default("{}")
+  result       ActivityResult @default(SUCCEEDED)
+  createdAt    DateTime       @default(now())
+
+  server Server? @relation(fields: [serverId], references: [id], onDelete: SetNull)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([serverId])
+  @@index([userId])
+  @@index([createdAt])
+  // Supports the default feed query (one server, newest first) as one index scan.
+  @@index([serverId, createdAt])
+}
+
+enum AuditOutcome {
+  SUCCEEDED
+  FAILED
+  DENIED
+}
+
+/// The security-relevant subset, kept separate from Activity on purpose:
+/// Activity is a product feature the user reads, AuditLog is evidence. Rows
+/// here outlive the objects they reference, so actors and targets are recorded
+/// as opaque identifiers with no foreign keys and no cascade.
+model AuditLog {
+  id         String       @id @default(uuid()) @db.Uuid
+  /// User id, api key id, or "system". Not a foreign key — the row must
+  /// survive deletion of the actor.
+  actor      String
+  actorType  String       @default("user")
+  /// e.g. "auth.login", "server.delete", "enrollment.consume".
+  action     String
+  targetType String?
+  targetId   String?
+  ip         String?
+  userAgent  String?
+  outcome    AuditOutcome
+  /// Passed through activity/redaction.logic.ts before it is written.
+  metadata   Json         @default("{}")
+  createdAt  DateTime     @default(now())
+
+  @@index([actor])
+  @@index([action])
+  @@index([targetType, targetId])
+  @@index([createdAt])
+}

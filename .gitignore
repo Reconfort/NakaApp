@@ -1,0 +1,19 @@
+# Rust
+agent/target/
+# Node
+control-plane/node_modules/
+control-plane/dist/
+control-plane/.env
+# Xcode
+macos/.derived/
+macos/build/
+**/xcuserdata/
+**/*.xcuserstate
+DerivedData/
+# Build loop artefacts
+build.log
+build-status.txt
+.build-request
+.derived/
+# macOS
+.DS_Store

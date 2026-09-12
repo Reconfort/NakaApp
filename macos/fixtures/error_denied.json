@@ -1,0 +1,1 @@
+{"error":{"code":"denied","message":"/etc/shadow is inside /etc/shadow, which ServerOS never reads or changes."}}

@@ -1,0 +1,26 @@
+[package]
+name = "serveros-agent"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "ServerOS agent — structured server management for a single Linux host"
+
+[[bin]]
+name = "serveros-agent"
+path = "src/main.rs"
+
+[lib]
+name = "serveros_agent"
+path = "src/lib.rs"
+
+[dependencies]
+serveros-json = { path = "../json" }
+serveros-crypto = { path = "../crypto" }
+serveros-http = { path = "../http" }
+serveros-linux = { path = "../linux" }
+serveros-fsops = { path = "../fsops" }
+serveros-systemd = { path = "../systemd" }
+serveros-docker = { path = "../docker" }
+serveros-pg = { path = "../pg" }

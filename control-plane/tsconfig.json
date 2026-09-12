@@ -1,0 +1,44 @@
+{
+  // Full-project compile. Requires node_modules (NestJS + the generated Prisma
+  // client). See tsconfig.logic.json for the dependency-free subset.
+  //
+  // Settings follow docs/reference/backend-stack.md §4.4: TypeScript 7 changed
+  // several defaults (`types` now defaults to `[]`, `rootDir` to `./`), so every
+  // one of them is stated explicitly here rather than inherited. That also keeps
+  // the file correct on the 6.0.3 line, which is what this project pins.
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "es2023",
+    "lib": ["es2023"],
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "types": ["node"],
+
+    // NestJS's DI and route metadata are built on legacy decorators.
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    // Conventional for Nest: injected properties and DTO fields are assigned by
+    // the framework, not by a constructor the compiler can see.
+    "strictPropertyInitialization": false,
+
+    "strict": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "declaration": false,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  },
+  // `src` only. `prisma.config.ts` and `prisma/seed.ts` live outside `rootDir`
+  // and are executed by the Prisma CLI (via tsx), never bundled into `dist` —
+  // including them here makes tsc refuse the whole program with TS6059 rather
+  // than checking them.
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "src/generated", "src/**/*.test.ts"]
+}

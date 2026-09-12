@@ -1,0 +1,1 @@
+{"error":{"code":"subsystem_unavailable","message":"Service management is not available on this server.","detail":"systemd is not this host's init system, or its bus is unreachable and systemctl is absent"}}

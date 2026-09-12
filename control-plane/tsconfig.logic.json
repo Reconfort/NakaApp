@@ -1,0 +1,35 @@
+{
+  // Dependency-free compile.
+  //
+  // Everything under `include` imports nothing but Node built-ins, so this
+  // project typechecks and its tests run with no `npm install` at all. That is
+  // deliberate: the pure layer holds every decision worth being sure about
+  // (token verification, health rollup, enrollment state machine, redaction,
+  // error mapping), and it must stay verifiable even when the registry,
+  // the database or the NestJS toolchain are unavailable.
+  //
+  // Rule for contributors: if adding an import to a *.logic.ts file makes this
+  // config fail, the import belongs in the Nest layer instead.
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "es2023",
+    "lib": ["es2023"],
+    "rootDir": "./src",
+    "types": ["node"],
+    "noEmit": true,
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.logic.ts", "src/**/*.test.ts"],
+  "exclude": ["node_modules", "dist", "src/generated"]
+}

@@ -1,0 +1,41 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/json",
+    "crates/crypto",
+    "crates/http",
+    "crates/linux",
+    "crates/fsops",
+    "crates/systemd",
+    "crates/docker",
+    "crates/pg",
+    "crates/agent",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "Proprietary"
+authors = ["Orion Systems & Design"]
+
+# ServerOS Agent is deliberately built with ZERO third-party dependencies.
+#
+# Rationale (see docs/SECURITY.md):
+#   * The agent runs with elevated privilege on customer infrastructure. Every
+#     transitive crate is supply-chain risk we would have to audit forever.
+#   * A `cargo build` with no network and no registry is reproducible anywhere,
+#     including inside a customer's air-gapped estate.
+#   * The surface we actually need (HTTP/1.1, JSON, SHA-256/HMAC, D-Bus,
+#     the Docker Engine API and the PostgreSQL v3 wire protocol) is all
+#     well-specified and small enough to own outright.
+#
+# Consequence: no `[dependencies]` section anywhere in this workspace may
+# reference a registry crate. `scripts/check-no-deps.sh` enforces this in CI.
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

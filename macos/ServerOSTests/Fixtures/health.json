@@ -1,0 +1,1 @@
+{"status":"ok","agent_version":"0.1.0","api_version":"1","server_id":"srv_563016eaa2ea5baa","uptime_seconds":20,"capabilities":{"metrics":true,"processes":true,"users":true,"files":true,"logs":true,"docker":true,"docker_api_version":"1.43","services":false,"journal":false,"postgres":true}}

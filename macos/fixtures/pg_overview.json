@@ -1,0 +1,1 @@
+{"version":"16.13","version_num":160013,"uptime_seconds":8320,"started_at":1789202185,"data_directory":"/tmp/pgdata","max_connections":100,"current_connections":6,"connection_usage_percent":6.0,"database_count":3,"total_size_bytes":23018045,"cache_hit_ratio":99.4,"transactions_committed":2356,"transactions_rolled_back":10,"deadlocks":0,"health":"healthy","health_reason":null}
