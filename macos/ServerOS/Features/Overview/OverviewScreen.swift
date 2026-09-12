@@ -42,6 +42,7 @@ public struct OverviewScreen: View {
     @AppStorage(ServerListFilter.requestKey) private var requestedServerFilter: String = ""
 
     @State private var isDemoNoticeDismissed = false
+    @State private var demoFailure: ServerOSError?
 
     public init(navigation: NavigationModel, onAddServer: @escaping () -> Void) {
         self.navigation = navigation
@@ -57,6 +58,15 @@ public struct OverviewScreen: View {
             }
         }
         .background(Palette.background)
+        .sheet(item: $demoFailure) { failure in
+            VStack(spacing: Spacing.section) {
+                ErrorState(error: failure)
+                Button("Close") { demoFailure = nil }
+                    .buttonStyle(.primary)
+            }
+            .padding(Spacing.section)
+            .frame(width: 460)
+        }
         .onReceive(NotificationCenter.default.publisher(for: .serverOSRefreshRequested)) { _ in
             refreshEverything()
         }
@@ -379,7 +389,10 @@ public struct OverviewScreen: View {
     }
 
     private func startDemo() {
-        Task { try? await model.enableDemoMode() }
+        Task {
+            do { try await model.enableDemoMode() }
+            catch { demoFailure = .listChangeFailed(what: "start demo mode", underlying: error) }
+        }
     }
 
     private func reloadServers() {

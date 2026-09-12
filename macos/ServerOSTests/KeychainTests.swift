@@ -39,6 +39,11 @@ final class KeychainTests: XCTestCase {
     }
 
     /// Write once, or skip the test if this environment has no usable Keychain.
+    ///
+    /// `KeychainStore` now falls back to the file-based keychain when this build
+    /// is not entitled to the data-protection one, so on an ad-hoc-signed test
+    /// host these run for real rather than skipping. The skip stays for the case
+    /// where neither is available — a locked keychain on CI, say.
     private func requireKeychain() throws {
         do {
             try store.set(Data("probe".utf8), for: "__probe__")
@@ -46,6 +51,24 @@ final class KeychainTests: XCTestCase {
         } catch {
             throw XCTSkip("The Keychain is not usable in this environment: \(error)")
         }
+    }
+
+    /// The regression this exists for: a build that cannot reach the
+    /// data-protection keychain must still be able to store a credential,
+    /// because the alternative was a server that silently failed to save.
+    func testStoringWorksEvenWithoutDataProtectionEntitlement() throws {
+        KeychainStore.overrideKeychainPreference(useDataProtection: false)
+        defer { KeychainStore.overrideKeychainPreference(useDataProtection: nil) }
+
+        let fallbackStore = KeychainStore(service: service)
+        do {
+            try fallbackStore.set(Data("secret".utf8), for: "fallback-account")
+        } catch {
+            throw XCTSkip("No keychain of either kind here: \(error)")
+        }
+        defer { try? fallbackStore.delete("fallback-account") }
+
+        XCTAssertEqual(try fallbackStore.get("fallback-account"), Data("secret".utf8))
     }
 
     // MARK: - Round trip

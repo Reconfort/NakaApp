@@ -229,10 +229,16 @@ private struct ServerSettingsTab: View {
             get: { model.isShowingDemo },
             set: { shouldShow in
                 Task {
-                    if shouldShow {
-                        try? await model.enableDemoMode()
-                    } else {
-                        try? await model.disableDemoMode()
+                    do {
+                        if shouldShow {
+                            try await model.enableDemoMode()
+                        } else {
+                            try await model.disableDemoMode()
+                        }
+                    } catch {
+                        // The toggle has already moved. Put it back by reloading
+                        // from the store, so the switch reflects what is true.
+                        await model.load()
                     }
                 }
             }
@@ -307,6 +313,10 @@ private struct SecuritySettingsTab: View {
     /// SwiftUI state — see the rules at the top of `ServerCredential.swift`.
     @State private var fingerprints: [String: String] = [:]
     @State private var isConfirmingForget = false
+
+    /// Credentials this Mac was asked to forget and could not. Saying they are
+    /// gone when they are still in the Keychain is the worst outcome here.
+    @State private var forgetOutcome: ServerOSError?
 
     var body: some View {
         Form {
@@ -394,6 +404,15 @@ private struct SecuritySettingsTab: View {
             confirmTitle: "Forget All",
             perform: { forgetAllCredentials() }
         )
+        .sheet(item: $forgetOutcome) { failure in
+            VStack(spacing: Spacing.section) {
+                ErrorState(error: failure)
+                Button("Close") { forgetOutcome = nil }
+                    .buttonStyle(.primary)
+            }
+            .padding(Spacing.section)
+            .frame(width: 460)
+        }
     }
 
     private func fingerprintLabel(for summary: ServerSummary) -> String {
@@ -419,10 +438,19 @@ private struct SecuritySettingsTab: View {
         let ids = model.servers.map(\.id)
         Task { @MainActor in
             let store = CredentialStore()
+            var failed: [String] = []
             for id in ids {
-                try? await store.delete(serverID: id)
+                do { try await store.delete(serverID: id) }
+                catch { failed.append(id) }
             }
-            fingerprints = [:]
+            // Saying "credentials forgotten" when some are still in the Keychain
+            // is the one outcome this screen must never produce.
+            forgetOutcome = failed.isEmpty
+                ? nil
+                : .listChangeFailed(
+                    what: "forget \(failed.count) of \(ids.count) saved credentials",
+                    underlying: KeychainError.unexpectedStatus(errSecInternalError))
+            await loadFingerprints()
         }
     }
 }

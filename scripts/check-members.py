@@ -136,6 +136,38 @@ def type_bodies(texts: dict[Path, str]) -> dict[str, str]:
     return {name: "\n".join(parts) for name, parts in bodies.items()}
 
 
+def own_bodies(path: Path, stripped: str) -> dict[str, str]:
+    """Top-level type bodies declared in one file, brace-matched.
+
+    `type_bodies` merges every file's declarations together, which is right for
+    looking a member up but wrong for deciding what `Self` means here.
+    """
+    out: dict[str, str] = {}
+    decl = re.compile(
+        r"^[ \t]*(?:@\w+(?:\([^)]*\))?[ \t]*)*"
+        r"(?:public |internal |private |fileprivate |open )?(?:final )?"
+        r"(?:struct|class|enum|protocol|actor|extension)[ \t]+"
+        r"(?P<name>[A-Za-z_][A-Za-z0-9_]*)",
+        re.M,
+    )
+    for m in decl.finditer(stripped):
+        start = stripped.find("{", m.end())
+        if start == -1:
+            continue
+        depth, i = 0, start
+        while i < len(stripped):
+            if stripped[i] == "{":
+                depth += 1
+            elif stripped[i] == "}":
+                depth -= 1
+                if depth == 0:
+                    break
+            i += 1
+        out.setdefault(m.group("name"), "")
+        out[m.group("name")] += stripped[start:i]
+    return out
+
+
 def members_of(body: str) -> set[str]:
     names: set[str] = set()
     for m in MEMBER_RE.finditer(body):
@@ -176,6 +208,20 @@ def main() -> int:
                 member = m.group(1)
                 if member not in known[ns]:
                     problems[(ns, member)].add(rel)
+
+        # `Self.x` inside a type must name a member of that type. This is what
+        # a compiler catches for free, and what it caught when a careless
+        # range-based edit deleted `parseInstallOutcome` while leaving three
+        # calls to it: "type 'Self' has no member 'parseInstallOutcome'".
+        # Resolving it here costs one pass and saves a build.
+        for type_name, body in own_bodies(path, s).items():
+            if type_name not in bodies:
+                continue
+            members = members_of(bodies[type_name])
+            for m in re.finditer(r"(?<![A-Za-z0-9_.])Self\.([a-z][A-Za-z0-9_]*)", body):
+                member = m.group(1)
+                if member not in members:
+                    problems[(f"{type_name}.Self", member)].add(rel)
 
         for binding, type_name in INSTANCE_BINDINGS.items():
             if type_name not in known:

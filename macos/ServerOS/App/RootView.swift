@@ -18,6 +18,11 @@ public struct RootView: View {
     @State private var isShowingAddServer = false
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
+    /// A write the user was waiting on that did not happen. Shown as a sheet
+    /// rather than a banner: losing a server they just spent two minutes
+    /// setting up is not something to notice out of the corner of an eye.
+    @State private var saveFailure: ServerOSError?
+
     public init() {}
 
     public var body: some View {
@@ -46,8 +51,22 @@ public struct RootView: View {
         .sheet(isPresented: $isShowingAddServer) {
             AddServerFlow { summary, credential in
                 Task {
-                    try? await model.add(summary, credential: credential)
-                    navigation.enter(serverID: summary.id)
+                    // `try?` here was a real bug: setup would finish, the agent
+                    // would genuinely be installed and running, saving would
+                    // fail, and the user would be dropped onto an empty Servers
+                    // list with no explanation. A write that the user is waiting
+                    // on is never discarded quietly — if the server cannot be
+                    // saved, they have to be told, because the server it refers
+                    // to now exists whether ServerOS remembers it or not.
+                    do {
+                        try await model.add(summary, credential: credential)
+                        navigation.enter(serverID: summary.id)
+                    } catch {
+                        saveFailure = ServerOSError.serverNotSaved(
+                            name: summary.name,
+                            underlying: error
+                        )
+                    }
                 }
             }
         }
@@ -60,6 +79,15 @@ public struct RootView: View {
                 )
                 .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: .top)))
             }
+        }
+        .sheet(item: $saveFailure) { failure in
+            VStack(spacing: Spacing.section) {
+                ErrorState(error: failure)
+                Button("Close") { saveFailure = nil }
+                    .buttonStyle(.primary)
+            }
+            .padding(Spacing.section)
+            .frame(width: 480)
         }
         .animation(Motion.panel, value: isShowingCommandPalette)
         .focusedSceneValue(\.navigation, navigation)

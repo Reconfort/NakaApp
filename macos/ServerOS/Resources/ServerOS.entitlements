@@ -8,9 +8,25 @@
 	<key>com.apple.security.app-sandbox</key>
 	<true/>
 
-	<!-- Outgoing connections only: SSH to the user's servers, and the
-	     loopback port that SSH forwards. ServerOS never listens. -->
+	<!-- Outgoing connections: SSH to the user's servers, and the loopback
+	     port that SSH forwards to. -->
 	<key>com.apple.security.network.client</key>
+	<true/>
+
+	<!-- Listening sockets. Needed, and it took a real failure to notice: the
+	     agent is reached through an SSH local port forward, which means
+	     ServerOS binds a listening socket and hands SSH the connections that
+	     arrive on it. Under App Sandbox that bind needs this entitlement even
+	     on 127.0.0.1, so without it every server showed "couldn't open a local
+	     port to forward through" — an earlier version of this comment claimed
+	     "ServerOS never listens", which was simply untrue of the design.
+
+	     The entitlement permits listening; it does not decide where. The one
+	     bind in the app is `bind(host: "127.0.0.1", port: 0)` — loopback only,
+	     with the port chosen by the OS — and `scripts/check-safety.py` fails
+	     the build if a bind to anything else ever appears. Nothing on the
+	     network can reach this socket. -->
+	<key>com.apple.security.network.server</key>
 	<true/>
 
 	<!-- Files the user explicitly picks: an SSH private key to import, a
@@ -20,11 +36,16 @@
 	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
 
-	<!-- Keychain access group, so server credentials are stored under one
-	     identity and can be removed as a set. -->
-	<key>keychain-access-groups</key>
-	<array>
-		<string>$(AppIdentifierPrefix)com.orionsystems.ServerOS</string>
-	</array>
+	<!-- No `keychain-access-groups`.
+	     ServerOS shares its keychain items with nothing, so it does not need
+	     an explicit group — without one, items go to the app's own default
+	     group, which is exactly the isolation wanted.
+	     It was here, spelled `$(AppIdentifierPrefix)com.orionsystems.ServerOS`,
+	     and that placeholder only resolves for a build signed with a real
+	     team. In a locally-signed build it resolved to a group the app was not
+	     entitled to, every keychain write failed with errSecMissingEntitlement
+	     (-34018), and — because the caller discarded the error — a server the
+	     user had just finished setting up silently failed to save. Asking for
+	     a right the app does not need cost a whole feature. -->
 </dict>
 </plist>

@@ -13,6 +13,7 @@
 //  A failure that cannot answer all three is not finished being handled.
 
 import Foundation
+import Security
 
 /// A failure the user might see.
 public struct ServerOSError: Error, Equatable, Sendable, Identifiable {
@@ -428,6 +429,58 @@ extension ServerOSError {
             causes: causes.isEmpty ? ["This happened while: \(step)"] : causes,
             technical: technical,
             isRetryable: true
+        )
+    }
+
+    /// A change to the server list that did not survive being written down.
+    ///
+    /// Renaming, removing and reordering all write to disk. When one fails and
+    /// the failure is discarded, the list on screen and the list on disk
+    /// disagree, and the user finds out at the next launch.
+    public static func listChangeFailed(what: String, underlying: Error) -> ServerOSError {
+        ServerOSError(
+            code: "list_change_failed",
+            headline: "ServerOS couldn't \(what).",
+            causes: [
+                "The change was not saved, so what you see may be out of date.",
+                "Reopening ServerOS will show what is actually stored.",
+            ],
+            technical: String(describing: underlying),
+            isRetryable: true
+        )
+    }
+
+    /// Setup finished but the server could not be written down.
+    ///
+    /// The distinction that matters to the user: the agent is installed and
+    /// running on that machine right now. ServerOS failing to remember it does
+    /// not undo any of that, and the message must not imply otherwise.
+    public static func serverNotSaved(name: String, underlying: Error) -> ServerOSError {
+        var causes = [
+            "\(name) was set up correctly — the agent is installed and running on it.",
+            "ServerOS couldn't save it on this Mac, so it isn't in your server list.",
+        ]
+
+        // The Keychain is where this fails in practice, and the raw OSStatus is
+        // useless to anyone. Name the actual cause.
+        if let keychain = underlying as? KeychainError,
+           case .unexpectedStatus(let status) = keychain,
+           status == errSecMissingEntitlement {
+            causes.append(
+                "The Keychain refused the write because this build of ServerOS "
+                + "isn't code-signed. Open the project in Xcode, choose your team "
+                + "under Signing & Capabilities, and run it from there."
+            )
+        }
+
+        causes.append("Adding the server again is safe — setup is idempotent.")
+
+        return ServerOSError(
+            code: "server_not_saved",
+            headline: "ServerOS couldn't save \(name).",
+            causes: causes,
+            technical: String(describing: underlying),
+            isRetryable: false
         )
     }
 

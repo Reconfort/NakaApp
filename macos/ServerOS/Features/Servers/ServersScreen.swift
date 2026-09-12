@@ -79,6 +79,11 @@ public struct ServersScreen: View {
     @State private var removalTarget: ServerSummary?
     @State private var isConfirmingRemoval = false
 
+    /// A change the user asked for that did not happen. Every mutation on this
+    /// screen writes to disk and to the Keychain, and both can fail; discarding
+    /// that failure leaves the list showing something untrue.
+    @State private var actionFailure: ServerOSError?
+
     public init(navigation: NavigationModel, onAddServer: @escaping () -> Void) {
         self.navigation = navigation
         self.onAddServer = onAddServer
@@ -119,6 +124,15 @@ public struct ServersScreen: View {
             confirmTitle: "Remove Server",
             perform: { removeConfirmedServer() }
         )
+        .sheet(item: $actionFailure) { failure in
+            VStack(spacing: Spacing.section) {
+                ErrorState(error: failure)
+                Button("Close") { actionFailure = nil }
+                    .buttonStyle(.primary)
+            }
+            .padding(Spacing.section)
+            .frame(width: 460)
+        }
         .task { consumeRequestedFilter() }
         .onChange(of: requestedFilter) { _, _ in consumeRequestedFilter() }
         .onReceive(NotificationCenter.default.publisher(for: .serverOSRefreshRequested)) { _ in
@@ -319,14 +333,20 @@ public struct ServersScreen: View {
     private func rename(_ summary: ServerSummary, to newName: String) {
         let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, trimmed != summary.name else { return }
-        Task { try? await model.rename(id: summary.id, to: trimmed) }
+        Task {
+            do { try await model.rename(id: summary.id, to: trimmed) }
+            catch { actionFailure = .listChangeFailed(what: "rename \(summary.name)", underlying: error) }
+        }
     }
 
     private func removeConfirmedServer() {
         guard let target = removalTarget else { return }
         removalTarget = nil
         navigation.forgetServer(id: target.id)
-        Task { try? await model.remove(id: target.id) }
+        Task {
+            do { try await model.remove(id: target.id) }
+            catch { actionFailure = .listChangeFailed(what: "remove \(target.name)", underlying: error) }
+        }
     }
 
     private func copyHostname(_ summary: ServerSummary) {
@@ -340,11 +360,17 @@ public struct ServersScreen: View {
         guard canReorder else { return }
         var ids = model.servers.map(\.id)
         ids.move(fromOffsets: source, toOffset: destination)
-        Task { try? await model.reorder(ids) }
+        Task {
+            do { try await model.reorder(ids) }
+            catch { actionFailure = .listChangeFailed(what: "reorder your servers", underlying: error) }
+        }
     }
 
     private func startDemo() {
-        Task { try? await model.enableDemoMode() }
+        Task {
+            do { try await model.enableDemoMode() }
+            catch { actionFailure = .listChangeFailed(what: "start demo mode", underlying: error) }
+        }
     }
 
     private func reloadServers() {

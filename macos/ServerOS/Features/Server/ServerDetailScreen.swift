@@ -38,6 +38,10 @@ public struct ServerDetailScreen: View {
     /// thing this header can do.
     @State private var isConfirmingRemoval = false
 
+    /// A removal that did not happen. The server is still there, and the user
+    /// must not be left thinking otherwise.
+    @State private var removalFailure: ServerOSError?
+
     public init(session: ServerSession, section: ServerSection, navigation: NavigationModel) {
         self.session = session
         self.section = section
@@ -80,7 +84,27 @@ public struct ServerDetailScreen: View {
         ) {
             // Leave first: the screen is about to lose the session it renders.
             navigation.forgetServer(id: session.id)
-            Task { try? await model.remove(id: session.id) }
+            Task {
+                do { try await model.remove(id: session.id) }
+                catch {
+                    // The screen has already navigated away, so the failure has
+                    // to surface at the fleet level or not at all. Reloading
+                    // puts the still-present server back in the list rather than
+                    // leaving the user believing it is gone.
+                    removalFailure = .listChangeFailed(
+                        what: "remove \(session.name)", underlying: error)
+                    await model.load()
+                }
+            }
+        }
+        .sheet(item: $removalFailure) { failure in
+            VStack(spacing: Spacing.section) {
+                ErrorState(error: failure)
+                Button("Close") { removalFailure = nil }
+                    .buttonStyle(.primary)
+            }
+            .padding(Spacing.section)
+            .frame(width: 460)
         }
     }
 

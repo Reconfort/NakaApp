@@ -591,6 +591,21 @@ public actor AgentBootstrap {
         return parts.joined(separator: " ")
     }
 
+    /// `SERVEROS-INSTALL-OK <version> <arch> <init>` is the only thing the
+    /// installer is allowed to put on stdout.
+    static func parseInstallOutcome(_ output: String) -> InstallOutcome {
+        for line in output.split(whereSeparator: { $0.isNewline }) {
+            let fields = line.split(whereSeparator: { $0.isWhitespace })
+            guard fields.count >= 4, fields[0] == "SERVEROS-INSTALL-OK" else { continue }
+            return InstallOutcome(
+                version: String(fields[1]),
+                architecture: String(fields[2]),
+                initSystem: String(fields[3])
+            )
+        }
+        return InstallOutcome(version: nil, architecture: nil, initSystem: nil)
+    }
+
     // MARK: Getting the binary onto the server
 
     /// Uploads the agent and returns where it landed, or nil when the installer
@@ -631,58 +646,66 @@ public actor AgentBootstrap {
         return remotePath
     }
 
-    /// The size of one base64 chunk. A command line has to fit in the server's
-    /// `ARG_MAX`, which is 2 MiB on Linux but shared with the environment, so
-    /// this stays well under it and pays for a few extra round trips instead.
-    static let uploadChunkSize = 48 * 1024
-
-    /// Streams a file over the SSH session already open, in base64 chunks, and
-    /// verifies what arrived.
+    /// Streams a file over the SSH session already open, and verifies what
+    /// arrived.
     ///
-    /// Chunked `run()` calls rather than SFTP, for the same reason the
-    /// installer script is sent this way: hardened servers often disable the
-    /// sftp subsystem, and this needs no second protocol and no second
+    /// The payload goes on **stdin**, in one channel. The first version of this
+    /// put base64 in the command string and sent it in 37 chunks; an SSH exec
+    /// request is a single packet with a negotiated ceiling, 48 KiB of base64
+    /// sailed past it, and setup died with
+    /// `NIOSSHError.protocolViolation: Sent EOF out of sequence` — one stray
+    /// EOF taking down the whole SSH connection. Data belongs on stdin.
+    ///
+    /// Still `run()` rather than SFTP, for the reason the installer script is
+    /// sent this way too: hardened servers routinely disable the sftp
+    /// subsystem, and this needs no second protocol and no second
     /// authentication.
     func upload(_ data: Data, to remotePath: String, step: String) async throws {
-        let encoded = data.base64EncodedString()
-        let staging = remotePath + ".b64"
+        let encoded = Data(data.base64EncodedString().utf8)
 
-        var offset = encoded.startIndex
-        var isFirst = true
-        while offset < encoded.endIndex {
-            let end = encoded.index(offset, offsetBy: Self.uploadChunkSize,
-                                    limitedBy: encoded.endIndex) ?? encoded.endIndex
-            let chunk = String(encoded[offset..<end])
-            let redirect = isFirst ? ">" : ">>"
-            let result = try await client.run(
-                "umask 077; printf '%s' \(Shell.quote(chunk)) \(redirect) \(Shell.quote(staging))",
-                timeout: 120
+        // `base64 -d` is in coreutils on every supported distribution; the
+        // capability probe has already established this is Linux.
+        let write = """
+        umask 077
+        base64 -d > \(Shell.quote(remotePath)) || exit 91
+        chmod 0700 \(Shell.quote(remotePath)) || exit 92
+        """
+
+        let written: SSHCommandResult
+        do {
+            written = try await client.run(write, stdin: encoded, timeout: 600)
+        } catch {
+            throw ServerOSError.setupFailed(
+                step: step,
+                reason: "ServerOS couldn't copy the agent to the server.",
+                causes: [
+                    "The connection may have dropped part-way through",
+                    "The server may be out of space in /tmp",
+                ],
+                technical: "\(error)"
             )
-            guard result.succeeded else {
-                _ = try? await client.run("rm -f \(Shell.quote(staging))", timeout: 20)
-                throw ServerOSError.setupFailed(
-                    step: step,
-                    reason: "ServerOS couldn't copy the agent to the server.",
-                    causes: [
-                        "The server may be out of space in /tmp",
-                        "The connection may have dropped part-way through",
-                    ],
-                    technical: Self.lastLines(result.stderr.isEmpty ? result.stdout : result.stderr, count: 10)
-                )
-            }
-            offset = end
-            isFirst = false
         }
 
-        // Decode, then prove byte-for-byte that what is on the server is what
-        // left this Mac. A truncated upload produces a binary that either fails
-        // to run or, worse, runs wrongly; neither is acceptable for something
-        // about to be installed as a privileged service.
+        guard written.succeeded else {
+            _ = try? await client.run("rm -f \(Shell.quote(remotePath))", timeout: 20)
+            throw ServerOSError.setupFailed(
+                step: step,
+                reason: "ServerOS couldn't copy the agent to the server.",
+                causes: [
+                    "The server may be out of space in /tmp",
+                    "base64 may not be installed on this server",
+                ],
+                technical: Self.lastLines(
+                    written.stderr.isEmpty ? written.stdout : written.stderr, count: 10)
+            )
+        }
+
+        // Prove byte-for-byte that what is on the server is what left this Mac.
+        // A truncated upload produces a binary that either fails to run or,
+        // worse, runs wrongly — neither acceptable for something about to be
+        // installed as a privileged service.
         let expected = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
         let verify = """
-        base64 -d < \(Shell.quote(staging)) > \(Shell.quote(remotePath)) || exit 91
-        rm -f \(Shell.quote(staging))
-        chmod 0700 \(Shell.quote(remotePath)) || exit 92
         if command -v sha256sum >/dev/null 2>&1; then
             echo "sha=$(sha256sum \(Shell.quote(remotePath)) | cut -d' ' -f1)"
         elif command -v shasum >/dev/null 2>&1; then
@@ -693,11 +716,11 @@ public actor AgentBootstrap {
         echo "bytes=$(wc -c < \(Shell.quote(remotePath)) | tr -d ' ')"
         """
 
-        let result = try await client.run(verify, timeout: 180)
+        let result = try await client.run(verify, timeout: 120)
         let fields = Self.labelledFields(result.stdout)
 
         guard result.succeeded, fields["bytes"] == String(data.count) else {
-            _ = try? await client.run("rm -f \(Shell.quote(remotePath)) \(Shell.quote(staging))", timeout: 20)
+            _ = try? await client.run("rm -f \(Shell.quote(remotePath))", timeout: 20)
             throw ServerOSError.setupFailed(
                 step: step,
                 reason: "The agent didn't arrive on the server intact.",
@@ -720,21 +743,6 @@ public actor AgentBootstrap {
                 technical: "sha256 expected \(expected.prefix(16))…, got \(actual.prefix(16))…"
             )
         }
-    }
-
-    /// `SERVEROS-INSTALL-OK <version> <arch> <init>` is the only thing the
-    /// installer is allowed to put on stdout.
-    static func parseInstallOutcome(_ output: String) -> InstallOutcome {
-        for line in output.split(whereSeparator: { $0.isNewline }) {
-            let fields = line.split(whereSeparator: { $0.isWhitespace })
-            guard fields.count >= 4, fields[0] == "SERVEROS-INSTALL-OK" else { continue }
-            return InstallOutcome(
-                version: String(fields[1]),
-                architecture: String(fields[2]),
-                initSystem: String(fields[3])
-            )
-        }
-        return InstallOutcome(version: nil, architecture: nil, initSystem: nil)
     }
 
     // MARK: Step 5 — enrollment

@@ -246,7 +246,19 @@ public actor SSHClient: SSHTunneling {
     /// stdout and stderr are kept apart, because a setup step that fails needs
     /// to put the stderr in the "Technical details" disclosure without it
     /// having been interleaved into the value it was trying to read.
-    public func run(_ command: String, timeout: TimeInterval = 60) async throws -> SSHCommandResult {
+    /// Run a command, optionally feeding it `stdin`.
+    ///
+    /// `stdin` exists because the alternative — putting the payload in the
+    /// command string — has a hard ceiling. An SSH exec request is one packet,
+    /// and a command carrying tens of kilobytes of base64 blows past the
+    /// negotiated maximum. Uploading the agent that way failed with
+    /// `protocolViolation`. Data belongs on stdin; the command string is for
+    /// the command.
+    public func run(
+        _ command: String,
+        stdin: Data? = nil,
+        timeout: TimeInterval = 60
+    ) async throws -> SSHCommandResult {
         guard let connection = connectionChannel else { throw ServerOSError.sshNotConnected }
 
         let result = OneShot<SSHCommandResult>(connection.eventLoop.makePromise(of: SSHCommandResult.self))
@@ -259,7 +271,7 @@ public actor SSHClient: SSHTunneling {
             ) { channel in
                 channel.eventLoop.makeCompletedFuture {
                     try channel.pipeline.syncOperations.addHandler(
-                        ExecCollectingHandler(command: command, result: result)
+                        ExecCollectingHandler(command: command, stdin: stdin, result: result)
                     )
                 }
             }.get()
@@ -719,13 +731,25 @@ final class ExecCollectingHandler: ChannelDuplexHandler {
     typealias OutboundOut = SSHChannelData
 
     private let command: String
+    private let stdin: Data?
     private let result: OneShot<SSHCommandResult>
     private var stdout = ByteBuffer()
     private var stderr = ByteBuffer()
     private var exitStatus: Int32?
 
-    init(command: String, result: OneShot<SSHCommandResult>) {
+    /// EOF may be sent once and only once. Sending it twice is a protocol
+    /// violation that NIOSSH treats as fatal for the whole connection — not
+    /// just the channel — so a single stray EOF takes the SSH session down and
+    /// whatever it was doing with it.
+    private var hasSentEOF = false
+
+    /// Comfortably under the 32 KiB a channel typically negotiates, so one
+    /// write is always one packet.
+    private static let stdinChunk = 16 * 1024
+
+    init(command: String, stdin: Data? = nil, result: OneShot<SSHCommandResult>) {
         self.command = command
+        self.stdin = stdin
         self.result = result
     }
 
@@ -743,8 +767,15 @@ final class ExecCollectingHandler: ChannelDuplexHandler {
         let request = SSHChannelRequestEvent.ExecRequest(command: command, wantReply: true)
         context.triggerUserOutboundEvent(request)
             .assumeIsolated()
-            .whenFailure { _ in
-                context.close(promise: nil)
+            .whenComplete { outcome in
+                switch outcome {
+                case .failure:
+                    context.close(promise: nil)
+                case .success:
+                    // Only after the server has accepted the request; writing
+                    // before that would race the reply.
+                    self.sendStdInAndEOF(context: context)
+                }
             }
         context.fireChannelActive()
     }
@@ -781,7 +812,9 @@ final class ExecCollectingHandler: ChannelDuplexHandler {
         // Spelled as a cast rather than as `case ChannelEvent.inputClosed:`,
         // which does not type-check against an `Any` subject.
         case let event as ChannelEvent where event == .inputClosed:
-            context.close(mode: .output, promise: nil)
+            // The remote is done talking. Closing our output here sends EOF —
+            // which is a violation if we already sent one after writing stdin.
+            closeOutputOnce(context: context)
 
         case is ChannelFailureEvent:
             result.fail(
@@ -800,6 +833,37 @@ final class ExecCollectingHandler: ChannelDuplexHandler {
     func write(context: ChannelHandlerContext, data: NIOAny, promise: EventLoopPromise<Void>?) {
         let buffer = unwrapOutboundIn(data)
         context.write(wrapOutboundOut(SSHChannelData(type: .channel, data: .byteBuffer(buffer))), promise: promise)
+    }
+
+    /// Feed the command its stdin, then tell it there is no more.
+    ///
+    /// A command reading stdin — `base64 -d > file` — will sit there until it
+    /// sees EOF, so the close is not optional. A command that was given no
+    /// stdin gets neither: its output side stays open exactly as before, which
+    /// is the behaviour every existing caller was built against.
+    private func sendStdInAndEOF(context: ChannelHandlerContext) {
+        guard let stdin, !stdin.isEmpty else { return }
+
+        var offset = stdin.startIndex
+        while offset < stdin.endIndex {
+            let end = stdin.index(offset, offsetBy: Self.stdinChunk, limitedBy: stdin.endIndex)
+                ?? stdin.endIndex
+            var buffer = context.channel.allocator.buffer(capacity: stdin.distance(from: offset, to: end))
+            buffer.writeBytes(stdin[offset..<end])
+            context.write(
+                wrapOutboundOut(SSHChannelData(type: .channel, data: .byteBuffer(buffer))),
+                promise: nil
+            )
+            offset = end
+        }
+        context.flush()
+        closeOutputOnce(context: context)
+    }
+
+    private func closeOutputOnce(context: ChannelHandlerContext) {
+        guard !hasSentEOF else { return }
+        hasSentEOF = true
+        context.close(mode: .output, promise: nil)
     }
 
     func channelInactive(context: ChannelHandlerContext) {

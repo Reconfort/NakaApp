@@ -156,12 +156,75 @@ public struct KeychainStore: Sendable {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecUseDataProtectionKeychain as String: true,
+            kSecUseDataProtectionKeychain as String: Self.useDataProtectionKeychain,
         ]
         if let account {
             query[kSecAttrAccount as String] = account
         }
         return query
+    }
+
+    // MARK: - Which keychain
+
+    /// The data-protection keychain is the right one: per-app isolation
+    /// enforced by the system, no ACL prompts, the same API as iOS.
+    ///
+    /// It also requires the app to carry an application-identifier entitlement,
+    /// which only a build signed with a real team has. A locally-built,
+    /// ad-hoc-signed ServerOS gets `errSecMissingEntitlement` (-34018) on every
+    /// single call — and that is not a hypothetical: it is what made a server
+    /// that had just been set up fail to save, with no message, because the
+    /// caller discarded the error.
+    ///
+    /// So: use the data-protection keychain, and fall back to the file-based
+    /// keychain when this build cannot. The fallback is still the macOS
+    /// Keychain — still encrypted, still per-user, still `SecItem` — it simply
+    /// predates app-identity isolation. Refusing to store anything at all would
+    /// not make a developer's Mac safer; it would just make the app unusable
+    /// unless they happen to have an Apple developer account.
+    ///
+    /// Decided once, on first use, because the answer cannot change while the
+    /// app is running.
+    nonisolated(unsafe) private static var cachedPreference: Bool?
+    private static let preferenceLock = NSLock()
+
+    static var useDataProtectionKeychain: Bool {
+        preferenceLock.lock()
+        defer { preferenceLock.unlock() }
+        if let cached = cachedPreference { return cached }
+        let usable = probeDataProtectionKeychain()
+        cachedPreference = usable
+        return usable
+    }
+
+    /// Write and delete one throwaway item to find out whether this build is
+    /// entitled to the data-protection keychain.
+    private static func probeDataProtectionKeychain() -> Bool {
+        let account = "__serveros_entitlement_probe__"
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: "com.orionsystems.ServerOS.probe",
+            kSecAttrAccount as String: account,
+            kSecUseDataProtectionKeychain as String: true,
+        ]
+        SecItemDelete(query as CFDictionary)
+
+        var insert = query
+        insert[kSecValueData as String] = Data("probe".utf8)
+        let status = SecItemAdd(insert as CFDictionary, nil)
+        SecItemDelete(query as CFDictionary)
+
+        // Only a missing entitlement means "this build cannot use it". Any
+        // other failure is a real problem that the fallback would only hide.
+        return status != errSecMissingEntitlement
+    }
+
+    /// Force the choice, for tests that need to exercise one keychain or the
+    /// other regardless of how the test host happens to be signed.
+    static func overrideKeychainPreference(useDataProtection: Bool?) {
+        preferenceLock.lock()
+        cachedPreference = useDataProtection
+        preferenceLock.unlock()
     }
 }
 

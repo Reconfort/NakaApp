@@ -69,16 +69,23 @@ build() {
   echo "phase=building exit= errors= warnings= at=$(date '+%H:%M:%S')" > "$STATUS"
 
   # -skipPackagePluginValidation keeps a first run from stopping on a prompt.
-  # CODE_SIGNING_ALLOWED=NO keeps a machine with no signing identity from
-  # failing a build that is otherwise fine — this is a Debug build for the
-  # developer's own machine, not something being shipped.
+  #
+  # Ad-hoc signing (`CODE_SIGN_IDENTITY=-`) rather than no signing at all.
+  # This started as CODE_SIGNING_ALLOWED=NO so the build would work on a
+  # machine with no Apple developer identity — and an unsigned app has no
+  # Keychain access, so every credential write failed with -34018 and adding
+  # a server silently did nothing. Ad-hoc still needs no identity, still
+  # builds anywhere, and gives the app the code identity the Keychain wants.
+  # CODE_SIGNING_REQUIRED=NO keeps the build working if even that fails.
   xcodebuild \
       -project "$PROJ" \
       -scheme ServerOS \
       -configuration Debug \
       -destination 'platform=macOS' \
       -derivedDataPath "$ROOT/.derived" \
-      CODE_SIGNING_ALLOWED=NO \
+      CODE_SIGN_IDENTITY=- \
+      CODE_SIGNING_REQUIRED=NO \
+      CODE_SIGNING_ALLOWED=YES \
       -skipPackagePluginValidation \
       build >> "$LOG" 2>&1
   local rc=$?
@@ -94,7 +101,9 @@ build() {
       -configuration Debug \
       -destination 'platform=macOS' \
       -derivedDataPath "$ROOT/.derived" \
-      CODE_SIGNING_ALLOWED=NO \
+      CODE_SIGN_IDENTITY=- \
+      CODE_SIGNING_REQUIRED=NO \
+      CODE_SIGNING_ALLOWED=YES \
       -skipPackagePluginValidation \
       test > "$TESTLOG" 2>&1
   local trc=$?

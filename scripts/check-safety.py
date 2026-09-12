@@ -316,11 +316,99 @@ def check_no_persisted_credential(verbose: bool) -> list[str]:
 
 # --------------------------------------------------------------------------
 
+# --------------------------------------------------------------------------
+# 5. A write the user is waiting on is never discarded
+# --------------------------------------------------------------------------
+
+# `try? await model.add(...)` is how a server that had just been set up
+# vanished without a word: the Keychain refused the write, `add` threw, and the
+# error went in the bin. Any mutation that persists something has to be either
+# handled or propagated — never swallowed.
+PERSISTING_CALLS = (
+    "add", "rename", "remove", "reorder",
+    "enableDemoMode", "disableDemoMode",
+    "upsert", "delete", "save",
+)
+SWALLOWED = re.compile(
+    r"try\?\s+await\s+(?:model|store|credentials|self\.model|self\.store)\.(\w+)\s*\("
+)
+
+
+def check_no_swallowed_writes(verbose: bool) -> list[str]:
+    problems: list[str] = []
+    previews_skipped = 0
+
+    for path in sorted((REPO / "macos" / "ServerOS").rglob("*.swift")):
+        raw = path.read_text(encoding="utf-8")
+        text = strip_comments(raw, "swift")
+        previews = preview_ranges(text)
+
+        for m in SWALLOWED.finditer(text):
+            if m.group(1) not in PERSISTING_CALLS:
+                continue
+            # A preview sets up throwaway state in a canvas; nobody is waiting
+            # on it and there is no one to tell.
+            if any(lo <= m.start() <= hi for lo, hi in previews):
+                previews_skipped += 1
+                continue
+            line_no = text.count("\n", 0, m.start()) + 1
+            lines = raw.splitlines()
+            line = lines[line_no - 1] if line_no <= len(lines) else ""
+            problems.append(
+                f"{path.relative_to(REPO)}:{line_no}: `try?` discards a failed "
+                f"{m.group(1)}(…)\n        {line.strip()[:110]}"
+            )
+
+    if verbose:
+        print(f"  {previews_skipped} swallowed write(s) inside #Preview blocks (fine)")
+    return problems
+
+
+# --------------------------------------------------------------------------
+# 6. Every listening socket is loopback-only
+# --------------------------------------------------------------------------
+
+# ServerOS carries `com.apple.security.network.server` because an SSH local
+# port forward has to bind a socket. That entitlement permits listening; it
+# does not decide where. The whole justification for holding it is that the one
+# bind in the app is on 127.0.0.1, so a bind to 0.0.0.0 — or to an address
+# computed at runtime — would quietly turn a loopback-only tool into something
+# reachable from the network.
+BIND_CALL = re.compile(r"\.bind\(\s*host:\s*([^,)]+)", re.S)
+LOOPBACK = {'"127.0.0.1"', '"::1"', '"localhost"'}
+
+
+def check_binds_are_loopback(verbose: bool) -> list[str]:
+    problems: list[str] = []
+    found = 0
+    for path in sorted((REPO / "macos" / "ServerOS").rglob("*.swift")):
+        raw = path.read_text(encoding="utf-8")
+        text = strip_comments(raw, "swift")
+        for m in BIND_CALL.finditer(text):
+            found += 1
+            host = m.group(1).strip()
+            if host in LOOPBACK:
+                continue
+            line_no = text.count("\n", 0, m.start()) + 1
+            lines = raw.splitlines()
+            line = lines[line_no - 1] if line_no <= len(lines) else ""
+            problems.append(
+                f"{path.relative_to(REPO)}:{line_no}: binds to {host}, not loopback\n"
+                f"        {line.strip()[:110]}"
+            )
+    if verbose:
+        print(f"  {found} listening socket(s), {found - len(problems)} on loopback")
+    return problems
+
+
+
 CHECKS = [
     ("Secrets are never passed to a log call", check_secret_logging),
+    ("No write the user waits on is silently discarded", check_no_swallowed_writes),
     ("The shipping app has no print/dump/NSLog", check_no_app_prints),
     ("Demo data is unreachable from the real path", check_demo_isolation),
     ("No SwiftData model stores a credential", check_no_persisted_credential),
+    ("Every listening socket is loopback-only", check_binds_are_loopback),
 ]
 
 
