@@ -2,16 +2,16 @@
   "name": "@serveros/control-plane",
   "version": "0.1.0",
   "private": true,
-  "description": "ServerOS control plane — identity, server registry, enrollment, projects, activity and events.",
+  "description": "ServerOS control plane \u2014 identity, server registry, enrollment, projects, activity and events.",
   "license": "UNLICENSED",
   "type": "module",
   "engines": {
     "node": ">=24.0.0"
   },
   "scripts": {
-    "build": "prisma generate && nest build",
-    "start": "node dist/main.js",
-    "start:dev": "nest start --watch",
+    "build": "node init && prisma generate && nest build",
+    "start": "node init && node dist/main.js",
+    "start:dev": "node init && nest start --watch",
     "test": "bash scripts/test.sh",
     "test:logic": "bash scripts/test.sh",
     "typecheck": "tsc -p tsconfig.json",

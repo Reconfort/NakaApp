@@ -23,7 +23,7 @@
 //! their database is not running — and those lead to completely different next
 //! actions.
 
-use crate::api::{bad_request, collection, internal, unavailable};
+use crate::api::{bad_request, collection, internal, unauthenticated, unavailable};
 use crate::auth::{Principal, Scope};
 use crate::state::AgentState;
 use serveros_http::{Request, Response, Status};
@@ -144,8 +144,13 @@ where
 
     let mut conn = match PgConnection::connect(&config) {
         Ok(conn) => conn,
-        // Not reachable, wrong credentials, no such database: all of these are
-        // states of the customer's database, not faults in the agent.
+        // All of these are states of the customer's database rather than faults
+        // in the agent — but they are not the same state. A cluster that is not
+        // running and a cluster that will not accept this role need different
+        // sentences and different actions, so they get different codes.
+        Err(e) if e.is_authentication_failure() => {
+            return unauthenticated("PostgreSQL", &e.user_message())
+        }
         Err(e) => return unavailable("PostgreSQL", &e.user_message()),
     };
 
@@ -188,7 +193,13 @@ fn pg_config(state: &AgentState, database: Option<String>) -> Result<PgConfig, R
     };
 
     Ok(PgConfig {
-        host: PgHost::Unix(settings.socket_dir.clone()),
+        // TCP when configured, socket otherwise. `PgHost::Tcp` refuses
+        // anything that does not resolve to loopback, so this cannot become a
+        // route to a database on another machine.
+        host: match &settings.host {
+            Some(host) => PgHost::Tcp(host.clone()),
+            None => PgHost::Unix(settings.socket_dir.clone()),
+        },
         port: settings.port,
         user: settings.user.clone(),
         password,
@@ -269,6 +280,36 @@ mod tests {
         let state = AgentState::new(config, vec![0u8; 32]);
         let response = pg_config(&state, None).expect_err("must refuse when disabled");
         assert_eq!(response.status, Status::SERVICE_UNAVAILABLE);
+    }
+
+    /// A state whose activity log points somewhere disposable — a unit test
+    /// must not create /var/lib/serveros on whoever's machine runs it.
+    fn test_state(configure: impl FnOnce(&mut crate::config::Config)) -> AgentState {
+        let mut config = crate::config::Config::default();
+        config.data_dir = std::env::temp_dir().join(format!("serveros-pg-{}", std::process::id()));
+        configure(&mut config);
+        AgentState::new(config, vec![0u8; 32])
+    }
+
+    #[test]
+    fn a_configured_host_means_tcp_not_the_socket() {
+        // This is the whole reason `postgres.host` exists. The agent runs as
+        // root; Debian and Ubuntu ship `local all all peer` in pg_hba.conf;
+        // peer authentication matches the OS user against the role name, so
+        // over the socket root can never be `serveros` and no password helps.
+        // Loopback TCP takes the `host … scram-sha-256` line instead.
+        let state = test_state(|c| c.postgres.host = Some("127.0.0.1".into()));
+        let config = pg_config(&state, None).expect("enabled by default");
+        assert_eq!(config.host, PgHost::Tcp("127.0.0.1".into()));
+    }
+
+    #[test]
+    fn no_configured_host_still_means_the_socket() {
+        // Servers provisioned before `postgres.host` existed must keep working
+        // exactly as they did.
+        let state = test_state(|_| {});
+        let config = pg_config(&state, None).expect("enabled by default");
+        assert_eq!(config.host, PgHost::Unix("/var/run/postgresql".into()));
     }
 
     #[test]

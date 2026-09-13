@@ -1,24 +1,27 @@
 Command line invocation:
-    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project /Users/creator/Documents/Startups/NakaApp/macos/ServerOS.xcodeproj -scheme ServerOS -configuration Debug -destination platform=macOS -derivedDataPath /Users/creator/Documents/Startups/NakaApp/.derived CODE_SIGNING_ALLOWED=NO -skipPackagePluginValidation test
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project /Users/creator/Documents/Startups/NakaApp/macos/ServerOS.xcodeproj -scheme ServerOS -configuration Debug -destination platform=macOS -derivedDataPath /Users/creator/Documents/Startups/NakaApp/.derived CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=YES -skipPackagePluginValidation test
 
 Build settings from command line:
-    CODE_SIGNING_ALLOWED = NO
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+    CODE_SIGNING_REQUIRED = NO
 
 Resolve Package Graph
 
 
 Resolved source packages:
-  swift-crypto: https://github.com/apple/swift-crypto.git @ 3.15.1
-  swift-asn1: https://github.com/apple/swift-asn1.git @ 1.7.2
   swift-nio: https://github.com/apple/swift-nio.git @ 2.102.0
-  swift-nio-ssh: https://github.com/apple/swift-nio-ssh.git @ 0.15.0
+  swift-asn1: https://github.com/apple/swift-asn1.git @ 1.7.2
+  swift-crypto: https://github.com/apple/swift-crypto.git @ 3.15.1
   swift-collections: https://github.com/apple/swift-collections.git @ 1.6.0
   swift-atomics: https://github.com/apple/swift-atomics.git @ 1.3.1
+  swift-nio-ssh: https://github.com/apple/swift-nio-ssh.git @ 0.15.0
   swift-system: https://github.com/apple/swift-system.git @ 1.8.1
 
 --- xcodebuild: WARNING: Using the first of multiple matching destinations:
 { platform:macOS, arch:arm64, id:00008112-000509940E08201E, name:My Mac }
 { platform:macOS, arch:x86_64, id:00008112-000509940E08201E, name:My Mac }
+note: Using codesigning identity override: -
 ComputePackagePrebuildTargetDependencyGraph
 
 Prepare packages
@@ -239,9 +242,9 @@ GatherProvisioningInputs
 
 CreateBuildDescription
 
-ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
-
 ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
 
 ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -x c -c /dev/null
 
@@ -249,8 +252,8 @@ ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeD
 
 ReadFileContents /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/share/docc/features.json
 
-Build description signature: cfa75d0cc5d7ac34bf3135217f6bdc06
-Build description path: /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/XCBuildData/cfa75d0cc5d7ac34bf3135217f6bdc06.xcbuilddata
+Build description signature: 27c457345d4d53cc22d04fc94f0fd5ba
+Build description path: /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/XCBuildData/27c457345d4d53cc22d04fc94f0fd5ba.xcbuilddata
 ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk /Users/creator/Documents/Startups/NakaApp/.derived/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
     cd /Users/creator/Documents/Startups/NakaApp/macos/ServerOS.xcodeproj
     /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -o /Users/creator/Documents/Startups/NakaApp/.derived/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
@@ -267,18 +270,50 @@ MkDir /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/Se
     cd /Users/creator/Documents/Startups/NakaApp/macos
     /bin/mkdir -p /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
 
-ProcessInfoPlistFile /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/swift-crypto_Crypto.bundle/Contents/Info.plist /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/swift-crypto.build/Debug/swift-crypto_Crypto.build/empty-swift-crypto_Crypto.plist (in target 'swift-crypto_Crypto' from project 'swift-crypto')
-    cd /Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-crypto
-    builtin-infoPlistUtility /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/swift-crypto.build/Debug/swift-crypto_Crypto.build/empty-swift-crypto_Crypto.plist -producttype com.apple.product-type.bundle -expandbuildsettings -platform macosx -o /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/swift-crypto_Crypto.bundle/Contents/Info.plist
-
 ProcessInfoPlistFile /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/swift-nio_NIOPosix.bundle/Contents/Info.plist /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/swift-nio.build/Debug/swift-nio_NIOPosix.build/empty-swift-nio_NIOPosix.plist (in target 'swift-nio_NIOPosix' from project 'swift-nio')
     cd /Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio
     builtin-infoPlistUtility /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/swift-nio.build/Debug/swift-nio_NIOPosix.build/empty-swift-nio_NIOPosix.plist -producttype com.apple.product-type.bundle -expandbuildsettings -platform macosx -o /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/swift-nio_NIOPosix.bundle/Contents/Info.plist
 
+ProcessInfoPlistFile /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/swift-crypto_Crypto.bundle/Contents/Info.plist /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/swift-crypto.build/Debug/swift-crypto_Crypto.build/empty-swift-crypto_Crypto.plist (in target 'swift-crypto_Crypto' from project 'swift-crypto')
+    cd /Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-crypto
+    builtin-infoPlistUtility /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/swift-crypto.build/Debug/swift-crypto_Crypto.build/empty-swift-crypto_Crypto.plist -producttype com.apple.product-type.bundle -expandbuildsettings -platform macosx -o /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/swift-crypto_Crypto.bundle/Contents/Info.plist
+
+note: Disabling hardened runtime with ad-hoc codesigning. (in target 'ServerOS' from project 'ServerOS')
 /Users/creator/Documents/Startups/NakaApp/macos/ServerOS.xcodeproj: warning: The Copy Bundle Resources build phase contains this target's Info.plist file '/Users/creator/Documents/Startups/NakaApp/macos/ServerOS/Resources/Info.plist'. (in target 'ServerOS' from project 'ServerOS')
 MkDir /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns (in target 'ServerOS' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
     /bin/mkdir -p /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns
+
+ProcessProductPackaging /Users/creator/Documents/Startups/NakaApp/macos/ServerOS/Resources/ServerOS.entitlements /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOS.build/ServerOS.app.xcent (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    
+    Entitlements:
+    
+    {
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.files.user-selected.read-write" = 1;
+    "com.apple.security.get-task-allow" = 1;
+    "com.apple.security.network.client" = 1;
+    "com.apple.security.network.server" = 1;
+}
+    
+    builtin-productPackagingUtility /Users/creator/Documents/Startups/NakaApp/macos/ServerOS/Resources/ServerOS.entitlements -entitlements -format xml -o /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOS.build/ServerOS.app.xcent
+
+ProcessProductPackagingDER /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOS.build/ServerOS.app.xcent /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOS.build/ServerOS.app.xcent.der (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    /usr/bin/derq query -f xml -i /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOS.build/ServerOS.app.xcent -o /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOS.build/ServerOS.app.xcent.der --raw
+
+CopySwiftLibs /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/MacOS/ServerOS.debug.dylib --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Library/SystemExtensions --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Extensions --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOS.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+libswiftCompatibilitySpan.dylib is up to date at /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libswiftCompatibilitySpan.dylib
+Probing signature of /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libswiftCompatibilitySpan.dylib
+/usr/bin/codesign -r- --display /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libswiftCompatibilitySpan.dylib
+Codesigning /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libswiftCompatibilitySpan.dylib
+/usr/bin/codesign --force --sign - --verbose /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libswiftCompatibilitySpan.dylib
+Probing signature of /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libswiftCompatibilitySpan.dylib
+/usr/bin/codesign -r- --display /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libswiftCompatibilitySpan.dylib
+Code signature of /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libswiftCompatibilitySpan.dylib is unchanged; keeping original
 
 ProcessInfoPlistFile /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Info.plist /Users/creator/Documents/Startups/NakaApp/macos/ServerOS/Resources/Info.plist (in target 'ServerOS' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
@@ -288,6 +323,18 @@ Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/Ser
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks/XCUnit.framework /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks
 
+Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libXCTestBundleInject.dylib /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestBundleInject.dylib (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestBundleInject.dylib /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks
+
+Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libXCTestSwiftSupport.dylib /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks
+
+Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCUIAutomation.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/XCUIAutomation.framework (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/XCUIAutomation.framework /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks
+
 Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTestSupport.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks/XCTestSupport.framework (in target 'ServerOS' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks/XCTestSupport.framework /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks
@@ -296,31 +343,13 @@ Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/Ser
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks/XCTestCore.framework /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks
 
-Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libXCTestSwiftSupport.dylib /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib (in target 'ServerOS' from project 'ServerOS')
-    cd /Users/creator/Documents/Startups/NakaApp/macos
-    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks
-
-Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libXCTestBundleInject.dylib /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestBundleInject.dylib (in target 'ServerOS' from project 'ServerOS')
-    cd /Users/creator/Documents/Startups/NakaApp/macos
-    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestBundleInject.dylib /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks
-
-Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCUIAutomation.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/XCUIAutomation.framework (in target 'ServerOS' from project 'ServerOS')
-    cd /Users/creator/Documents/Startups/NakaApp/macos
-    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/XCUIAutomation.framework /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks
-
-Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTest.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework (in target 'ServerOS' from project 'ServerOS')
-    cd /Users/creator/Documents/Startups/NakaApp/macos
-    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks
-
 SwiftDriver ServerOSTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ServerOSTests -Onone @/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.SwiftFileList -DDEBUG -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOPosix.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOWASI.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOLinux.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIODarwin.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOFreeBSD.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOOpenBSD.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOAtomics.modulemap -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos14.0 -g -module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/creator/Documents/Startups/NakaApp/.derived/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex -sdk-module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-generated-files.hmap -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-own-target-headers.hmap -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOS-a014078c1a06d8aef1361c5252c99eb5-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-project-headers.hmap -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOPosix/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOWASI/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOWindows/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOLinux/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIODarwin/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOFreeBSD/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOOpenBSD/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOAtomics/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-atomics/Sources/_AtomicsShims/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/DerivedSources/arm64 -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests-Swift.h -working-directory /Users/creator/Documents/Startups/NakaApp/macos -experimental-emit-module-separately -disable-cmo
 
-CopySwiftLibs /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app (in target 'ServerOS' from project 'ServerOS')
+Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTest.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework (in target 'ServerOS' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
-    builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/MacOS/ServerOS.debug.dylib --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Library/SystemExtensions --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Extensions --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOS.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
-Ignoring --strip-bitcode because --sign was not passed
-libswiftCompatibilitySpan.dylib is up to date at /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libswiftCompatibilitySpan.dylib
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks
 
 Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTAutomationSupport.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks/XCTAutomationSupport.framework (in target 'ServerOS' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
@@ -330,19 +359,77 @@ Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/Ser
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/Testing.framework /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks
 
-SwiftEmitModule normal arm64 Emitting\ module\ for\ ServerOSTests (in target 'ServerOSTests' from project 'ServerOS')
-
-EmitSwiftModule normal arm64 (in target 'ServerOSTests' from project 'ServerOS')
+CodeSign /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libXCTestBundleInject.dylib (in target 'ServerOS' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
     
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --preserve-metadata\=identifier,entitlements,flags --generate-entitlement-der /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libXCTestBundleInject.dylib
+/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libXCTestBundleInject.dylib: replacing existing signature
 
-SwiftDriver\ Compilation ServerOSTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ServerOSTests' from project 'ServerOS')
+CodeSign /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libXCTestSwiftSupport.dylib (in target 'ServerOS' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
-    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ServerOSTests -Onone @/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.SwiftFileList -DDEBUG -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOPosix.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOWASI.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOLinux.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIODarwin.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOFreeBSD.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOOpenBSD.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOAtomics.modulemap -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos14.0 -g -module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/creator/Documents/Startups/NakaApp/.derived/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex -sdk-module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-generated-files.hmap -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-own-target-headers.hmap -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOS-a014078c1a06d8aef1361c5252c99eb5-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-project-headers.hmap -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOPosix/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOWASI/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOWindows/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOLinux/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIODarwin/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOFreeBSD/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOOpenBSD/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOAtomics/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-atomics/Sources/_AtomicsShims/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/DerivedSources/arm64 -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests-Swift.h -working-directory /Users/creator/Documents/Startups/NakaApp/macos -experimental-emit-module-separately -disable-cmo
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --preserve-metadata\=identifier,entitlements,flags --generate-entitlement-der /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libXCTestSwiftSupport.dylib
+/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/libXCTestSwiftSupport.dylib: replacing existing signature
 
-CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/docker_images.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/docker_images.json (in target 'ServerOSTests' from project 'ServerOS')
+CodeSign /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCUnit.framework (in target 'ServerOS' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
-    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/docker_images.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --preserve-metadata\=identifier,entitlements,flags --generate-entitlement-der /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCUnit.framework
+/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCUnit.framework: replacing existing signature
+
+CodeSign /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTestSupport.framework (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --preserve-metadata\=identifier,entitlements,flags --generate-entitlement-der /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTestSupport.framework
+/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTestSupport.framework: replacing existing signature
+
+CodeSign /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTestCore.framework (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --preserve-metadata\=identifier,entitlements,flags --generate-entitlement-der /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTestCore.framework
+/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTestCore.framework: replacing existing signature
+
+CodeSign /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCUIAutomation.framework (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --preserve-metadata\=identifier,entitlements,flags --generate-entitlement-der /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCUIAutomation.framework
+/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCUIAutomation.framework: replacing existing signature
+
+CodeSign /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTest.framework (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --preserve-metadata\=identifier,entitlements,flags --generate-entitlement-der /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTest.framework
+/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTest.framework: replacing existing signature
+
+CodeSign /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTAutomationSupport.framework (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --preserve-metadata\=identifier,entitlements,flags --generate-entitlement-der /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTAutomationSupport.framework
+/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/XCTAutomationSupport.framework: replacing existing signature
+
+CodeSign /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/Testing.framework (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --preserve-metadata\=identifier,entitlements,flags --generate-entitlement-der /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/Testing.framework
+/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/Frameworks/Testing.framework: replacing existing signature
 
 Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/swift-nio_NIOPosix.bundle /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/swift-nio_NIOPosix.bundle (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
@@ -352,17 +439,25 @@ Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/Ser
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/swift-crypto_Crypto.bundle /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
 
+ProcessInfoPlistFile /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Info.plist /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/empty-ServerOSTests.plist (in target 'ServerOSTests' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    builtin-infoPlistUtility /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/empty-ServerOSTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -platform macosx -scanforprivacyfile /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/swift-crypto_Crypto.bundle -scanforprivacyfile /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/swift-nio_NIOPosix.bundle -o /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Info.plist
+
 CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/system.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/system.json (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/system.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
 
-CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/services.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/services.json (in target 'ServerOSTests' from project 'ServerOS')
+CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/docker_containers.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/docker_containers.json (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
-    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/services.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/docker_containers.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
 
 CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/users.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/users.json (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/users.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
+
+CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/services.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/services.json (in target 'ServerOSTests' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/services.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
 
 CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/projects.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/projects.json (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
@@ -376,13 +471,13 @@ CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Deb
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/pg_roles.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
 
-CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/pg_overview.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/pg_overview.json (in target 'ServerOSTests' from project 'ServerOS')
-    cd /Users/creator/Documents/Startups/NakaApp/macos
-    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/pg_overview.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
-
 CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/pg_databases.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/pg_databases.json (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/pg_databases.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
+
+CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/pg_overview.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/pg_overview.json (in target 'ServerOSTests' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/pg_overview.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
 
 CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/pg_connections.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/pg_connections.json (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
@@ -395,10 +490,6 @@ CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Deb
 CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/health.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/health.json (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/health.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
-
-ProcessInfoPlistFile /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Info.plist /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/empty-ServerOSTests.plist (in target 'ServerOSTests' from project 'ServerOS')
-    cd /Users/creator/Documents/Startups/NakaApp/macos
-    builtin-infoPlistUtility /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/empty-ServerOSTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -platform macosx -scanforprivacyfile /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/swift-crypto_Crypto.bundle -scanforprivacyfile /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/swift-nio_NIOPosix.bundle -o /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Info.plist
 
 CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/groups.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/groups.json (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
@@ -440,9 +531,9 @@ CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Deb
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/docker_info.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
 
-CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/docker_containers.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/docker_containers.json (in target 'ServerOSTests' from project 'ServerOS')
+CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/docker_images.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/docker_images.json (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
-    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/docker_containers.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/docker_images.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
 
 CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources/databases.json /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/databases.json (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
@@ -456,30 +547,86 @@ CpResource /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Deb
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/Fixtures/activity.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources
 
+SwiftCompile normal arm64 Compiling\ DatabaseProvisionerTests.swift /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/DatabaseProvisionerTests.swift (in target 'ServerOSTests' from project 'ServerOS')
+
+SwiftCompile normal arm64 /Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/DatabaseProvisionerTests.swift (in target 'ServerOSTests' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ ServerOSTests (in target 'ServerOSTests' from project 'ServerOS')
+
+EmitSwiftModule normal arm64 (in target 'ServerOSTests' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    
+
 SwiftDriverJobDiscovery normal arm64 Emitting module for ServerOSTests (in target 'ServerOSTests' from project 'ServerOS')
 
 SwiftDriver\ Compilation\ Requirements ServerOSTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ServerOSTests -Onone @/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.SwiftFileList -DDEBUG -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOPosix.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOWASI.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOLinux.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIODarwin.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOFreeBSD.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOOpenBSD.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOAtomics.modulemap -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos14.0 -g -module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/creator/Documents/Startups/NakaApp/.derived/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex -sdk-module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-generated-files.hmap -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-own-target-headers.hmap -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOS-a014078c1a06d8aef1361c5252c99eb5-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-project-headers.hmap -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOPosix/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOWASI/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOWindows/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOLinux/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIODarwin/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOFreeBSD/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOOpenBSD/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOAtomics/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-atomics/Sources/_AtomicsShims/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/DerivedSources/arm64 -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests-Swift.h -working-directory /Users/creator/Documents/Startups/NakaApp/macos -experimental-emit-module-separately -disable-cmo
 
+Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOSTests.swiftmodule/arm64-apple-macos.swiftmodule /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.swiftmodule (in target 'ServerOSTests' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.swiftmodule /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOSTests.swiftmodule/arm64-apple-macos.swiftmodule
+
 Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOSTests.swiftmodule/arm64-apple-macos.abi.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.abi.json (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.abi.json /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOSTests.swiftmodule/arm64-apple-macos.abi.json
 
+Copy /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOSTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.swiftsourceinfo (in target 'ServerOSTests' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.swiftsourceinfo /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOSTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+SwiftDriverJobDiscovery normal arm64 Compiling DatabaseProvisionerTests.swift (in target 'ServerOSTests' from project 'ServerOS')
+
+SwiftDriver\ Compilation ServerOSTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ServerOSTests' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ServerOSTests -Onone @/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.SwiftFileList -DDEBUG -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOPosix.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOWASI.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOLinux.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIODarwin.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOFreeBSD.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOOpenBSD.modulemap -Xcc -fmodule-map-file\=/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/GeneratedModuleMaps/CNIOAtomics.modulemap -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos14.0 -g -module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/creator/Documents/Startups/NakaApp/.derived/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex -sdk-module-cache-path /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/creator/Documents/Startups/NakaApp/.derived/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-generated-files.hmap -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-own-target-headers.hmap -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOS-a014078c1a06d8aef1361c5252c99eb5-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests-project-headers.hmap -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOPosix/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOWASI/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOWindows/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOLinux/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIODarwin/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOFreeBSD/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOOpenBSD/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-nio/Sources/CNIOAtomics/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/SourcePackages/checkouts/swift-atomics/Sources/_AtomicsShims/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/include -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/DerivedSources/arm64 -Xcc -I/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests-Swift.h -working-directory /Users/creator/Documents/Startups/NakaApp/macos -experimental-emit-module-separately -disable-cmo
+
 Ld /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/MacOS/ServerOSTests normal (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
-    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos14.0 -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -L/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug -L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug -iframework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -Xlinker -rpath -Xlinker @loader_path/../Frameworks -Xlinker -rpath -Xlinker @executable_path/../Frameworks -bundle_loader /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/MacOS/ServerOS -Xlinker -object_path_lto -Xlinker /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.swiftmodule @/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests-linker-args.resp -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/MacOS/ServerOS.debug.dylib -o /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/MacOS/ServerOSTests
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos14.0 -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -L/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug -L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -F/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug -iframework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/PackageFrameworks -Xlinker -rpath -Xlinker @loader_path/../Frameworks -Xlinker -rpath -Xlinker @executable_path/../Frameworks -bundle_loader /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/MacOS/ServerOS -Xlinker -object_path_lto -Xlinker /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.swiftmodule @/Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests-linker-args.resp -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/MacOS/ServerOS.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/MacOS/ServerOSTests
 
 CopySwiftLibs /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
-    builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/MacOS/ServerOSTests --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Frameworks --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/PlugIns --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Library/SystemExtensions --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Extensions --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
-Ignoring --strip-bitcode because --sign was not passed
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/MacOS/ServerOSTests --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Frameworks --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/PlugIns --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Library/SystemExtensions --scan-folder /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Extensions --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
 
 ExtractAppIntentsMetadata (in target 'ServerOSTests' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
     /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name ServerOSTests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk --xcode-version 17F113 --platform-family macOS --deployment-target 14.0 --bundle-identifier com.orionsystems.ServerOS.Tests --output /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/Resources --target-triple arm64-apple-macos14.0 --binary-file /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest/Contents/MacOS/ServerOSTests --dependency-file /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests_dependency_info.dat --stringsdata-file /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.SwiftFileList --metadata-file-list /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests.DependencyMetadataFileList --static-metadata-file-list /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/ServerOSTests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOSTests.build/Objects-normal/arm64/ServerOSTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
-2026-09-12 23:48:54.629 appintentsmetadataprocessor[30160:397647] Starting appintentsmetadataprocessor export
-2026-09-12 23:48:54.635 appintentsmetadataprocessor[30160:397647] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+2026-09-13 08:48:02.240 appintentsmetadataprocessor[71889:801439] Starting appintentsmetadataprocessor export
+2026-09-13 08:48:02.245 appintentsmetadataprocessor[71889:801439] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+CodeSign /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest (in target 'ServerOSTests' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/PlugIns/ServerOSTests.xctest
+
+CodeSign /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/MacOS/ServerOS.debug.dylib (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/MacOS/ServerOS.debug.dylib
+/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/MacOS/ServerOS.debug.dylib: replacing existing signature
+
+CodeSign /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/MacOS/__preview.dylib (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/MacOS/__preview.dylib
+/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app/Contents/MacOS/__preview.dylib: replacing existing signature
+
+CodeSign /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app (in target 'ServerOS' from project 'ServerOS')
+    cd /Users/creator/Documents/Startups/NakaApp/macos
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /Users/creator/Documents/Startups/NakaApp/.derived/Build/Intermediates.noindex/ServerOS.build/Debug/ServerOS.build/ServerOS.app.xcent --timestamp\=none --generate-entitlement-der /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app
+/Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app: replacing existing signature
 
 Validate /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app (in target 'ServerOS' from project 'ServerOS')
     cd /Users/creator/Documents/Startups/NakaApp/macos
@@ -489,35 +636,28 @@ RegisterWithLaunchServices /Users/creator/Documents/Startups/NakaApp/.derived/Bu
     cd /Users/creator/Documents/Startups/NakaApp/macos
     /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister -f -R -trusted /Users/creator/Documents/Startups/NakaApp/.derived/Build/Products/Debug/ServerOS.app
 
-2026-09-12 23:48:57.623075+0200 ServerOS[30174:397840] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.623871+0200 ServerOS[30174:397842] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.623658+0200 ServerOS[30174:397840] [Application] Error registering app with intents framework: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.623914+0200 ServerOS[30174:397842] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.624494+0200 ServerOS[30174:397849] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.624817+0200 ServerOS[30174:397842] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.625181+0200 ServerOS[30174:397841] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626125+0200 ServerOS[30174:397841] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626130+0200 ServerOS[30174:397842] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626138+0200 ServerOS[30174:397849] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626572+0200 ServerOS[30174:397842] [Connection] Will NOT re-try to establish the connection
-2026-09-12 23:48:57.625732+0200 ServerOS[30174:397850] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626706+0200 ServerOS[30174:397850] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626276+0200 ServerOS[30174:397851] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626590+0200 ServerOS[30174:397840] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626872+0200 ServerOS[30174:397840] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626740+0200 ServerOS[30174:397851] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.996977+0200 ServerOS[30174:397762] ApplePersistenceIgnoreState: Existing state will not be touched. New state will be written to /var/folders/3q/k5y5350j3_z5p6mqj81kp9980000gn/T/com.orionsystems.ServerOS.savedState
-Test Suite 'All tests' started at 2026-09-12 23:48:59.322.
-Test Suite 'ServerOSTests.xctest' started at 2026-09-12 23:48:59.323.
-Test Suite 'AgentBinaryTests' started at 2026-09-12 23:48:59.323.
+2026-09-13 08:48:04.844637+0200 ServerOS[71904:801582] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-13 08:48:04.845087+0200 ServerOS[71904:801590] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-13 08:48:04.845113+0200 ServerOS[71904:801590] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-13 08:48:04.845115+0200 ServerOS[71904:801582] [Application] Error registering app with intents framework: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-13 08:48:04.845360+0200 ServerOS[71904:801594] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-13 08:48:04.845371+0200 ServerOS[71904:801594] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-13 08:48:04.845614+0200 ServerOS[71904:801594] [Connection] Will NOT re-try to establish the connection
+2026-09-13 08:48:04.847366+0200 ServerOS[71904:801590] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-13 08:48:04.847377+0200 ServerOS[71904:801590] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-13 08:48:05.298098+0200 ServerOS[71904:801559] ApplePersistenceIgnoreState: Existing state will not be touched. New state will be written to /Users/creator/Library/Containers/com.orionsystems.ServerOS/Data/tmp/com.orionsystems.ServerOS.savedState
+2026-09-13 08:48:05.856821+0200 ServerOS[71904:801559] [SwiftUI] Accessing Environment<Bool>'s value outside of being installed on a View. This will always read the default value and will not update.
+Test Suite 'All tests' started at 2026-09-13 08:48:06.660.
+Test Suite 'ServerOSTests.xctest' started at 2026-09-13 08:48:06.661.
+Test Suite 'AgentBinaryTests' started at 2026-09-13 08:48:06.661.
 Test Case '-[ServerOSTests.AgentBinaryTests testABundledBinaryIsInstalledFromDiskRatherThanDownloaded]' started.
-Test Case '-[ServerOSTests.AgentBinaryTests testABundledBinaryIsInstalledFromDiskRatherThanDownloaded]' passed (0.002 seconds).
+Test Case '-[ServerOSTests.AgentBinaryTests testABundledBinaryIsInstalledFromDiskRatherThanDownloaded]' passed (0.003 seconds).
 Test Case '-[ServerOSTests.AgentBinaryTests testADownloadFailureDoesNameTheHostItTried]' started.
 Test Case '-[ServerOSTests.AgentBinaryTests testADownloadFailureDoesNameTheHostItTried]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.AgentBinaryTests testAMirrorIsPassedThroughWhenOneIsConfigured]' started.
-Test Case '-[ServerOSTests.AgentBinaryTests testAMirrorIsPassedThroughWhenOneIsConfigured]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.AgentBinaryTests testAMirrorIsPassedThroughWhenOneIsConfigured]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.AgentBinaryTests testAMissingBuildExplainsItselfAndIsNotRetryable]' started.
-Test Case '-[ServerOSTests.AgentBinaryTests testAMissingBuildExplainsItselfAndIsNotRetryable]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.AgentBinaryTests testAMissingBuildExplainsItselfAndIsNotRetryable]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.AgentBinaryTests testAnUnknownArchitectureIsPassedThroughRatherThanGuessed]' started.
 Test Case '-[ServerOSTests.AgentBinaryTests testAnUnknownArchitectureIsPassedThroughRatherThanGuessed]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.AgentBinaryTests testAnUploadFailureDoesNotBlameTheNetwork]' started.
@@ -528,11 +668,11 @@ Test Case '-[ServerOSTests.AgentBinaryTests testTheAppShipsAnAgentForAtLeastOneA
 Test Case '-[ServerOSTests.AgentBinaryTests testTheAppShipsAnAgentForAtLeastOneArchitecture]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.AgentBinaryTests testUnameVariantsMapToTheBuildsWeShip]' started.
 Test Case '-[ServerOSTests.AgentBinaryTests testUnameVariantsMapToTheBuildsWeShip]' passed (0.000 seconds).
-Test Suite 'AgentBinaryTests' passed at 2026-09-12 23:48:59.334.
-	 Executed 9 tests, with 0 failures (0 unexpected) in 0.006 (0.011) seconds
-Test Suite 'AgentTokenTests' started at 2026-09-12 23:48:59.335.
+Test Suite 'AgentBinaryTests' passed at 2026-09-13 08:48:06.673.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.007 (0.012) seconds
+Test Suite 'AgentTokenTests' started at 2026-09-13 08:48:06.674.
 Test Case '-[ServerOSTests.AgentTokenTests testADifferentSecretProducesADifferentSignature]' started.
-Test Case '-[ServerOSTests.AgentTokenTests testADifferentSecretProducesADifferentSignature]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.AgentTokenTests testADifferentSecretProducesADifferentSignature]' passed (0.031 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testAnAwkwardSubjectStillYieldsParseableJSON]' started.
 Test Case '-[ServerOSTests.AgentTokenTests testAnAwkwardSubjectStillYieldsParseableJSON]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testAnEmptySubjectFallsBackRatherThanProducingAnEmptyClaim]' started.
@@ -542,7 +682,7 @@ Test Case '-[ServerOSTests.AgentTokenTests testBase64URLMatchesTheKnownVector]' 
 Test Case '-[ServerOSTests.AgentTokenTests testBase64URLRejectsAnImpossibleLength]' started.
 Test Case '-[ServerOSTests.AgentTokenTests testBase64URLRejectsAnImpossibleLength]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testBase64URLRoundTrips]' started.
-Test Case '-[ServerOSTests.AgentTokenTests testBase64URLRoundTrips]' passed (0.002 seconds).
+Test Case '-[ServerOSTests.AgentTokenTests testBase64URLRoundTrips]' passed (0.004 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testClaimsMatchTheAgentsExpectations]' started.
 Test Case '-[ServerOSTests.AgentTokenTests testClaimsMatchTheAgentsExpectations]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testDefaultSubjectIsNeverEmpty]' started.
@@ -550,13 +690,13 @@ Test Case '-[ServerOSTests.AgentTokenTests testDefaultSubjectIsNeverEmpty]' pass
 Test Case '-[ServerOSTests.AgentTokenTests testDuplicateScopesAreCollapsed]' started.
 Test Case '-[ServerOSTests.AgentTokenTests testDuplicateScopesAreCollapsed]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testEmptyScopesFallBackToRead]' started.
-Test Case '-[ServerOSTests.AgentTokenTests testEmptyScopesFallBackToRead]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.AgentTokenTests testEmptyScopesFallBackToRead]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testEveryMintIsUniqueBecauseOfTheTokenID]' started.
-Test Case '-[ServerOSTests.AgentTokenTests testEveryMintIsUniqueBecauseOfTheTokenID]' passed (0.008 seconds).
+Test Case '-[ServerOSTests.AgentTokenTests testEveryMintIsUniqueBecauseOfTheTokenID]' passed (0.007 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testEveryPartIsUnpaddedBase64URL]' started.
 Test Case '-[ServerOSTests.AgentTokenTests testEveryPartIsUnpaddedBase64URL]' passed (0.002 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testLifetimeHasAFloor]' started.
-Test Case '-[ServerOSTests.AgentTokenTests testLifetimeHasAFloor]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.AgentTokenTests testLifetimeHasAFloor]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testLifetimeIsCappedAtTheAgentsMaximum]' started.
 Test Case '-[ServerOSTests.AgentTokenTests testLifetimeIsCappedAtTheAgentsMaximum]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testNegativeLifetimeStillProducesAUsableToken]' started.
@@ -568,43 +708,113 @@ Test Case '-[ServerOSTests.AgentTokenTests testScopesAreOrderedLeastToMostPrivil
 Test Case '-[ServerOSTests.AgentTokenTests testSignatureIsAnIndependentlyReproducibleHMAC]' started.
 Test Case '-[ServerOSTests.AgentTokenTests testSignatureIsAnIndependentlyReproducibleHMAC]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testSubjectIsBounded]' started.
-Test Case '-[ServerOSTests.AgentTokenTests testSubjectIsBounded]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.AgentTokenTests testSubjectIsBounded]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testSubjectIsReducedToCharactersThatNeedNoEscaping]' started.
 Test Case '-[ServerOSTests.AgentTokenTests testSubjectIsReducedToCharactersThatNeedNoEscaping]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.AgentTokenTests testTokenHasThreePartsAndTheAgentsPrefix]' started.
-Test Case '-[ServerOSTests.AgentTokenTests testTokenHasThreePartsAndTheAgentsPrefix]' passed (0.001 seconds).
-Test Suite 'AgentTokenTests' passed at 2026-09-12 23:48:59.396.
-	 Executed 21 tests, with 0 failures (0 unexpected) in 0.022 (0.062) seconds
-Test Suite 'BootstrapStepTests' started at 2026-09-12 23:48:59.397.
+Test Case '-[ServerOSTests.AgentTokenTests testTokenHasThreePartsAndTheAgentsPrefix]' passed (0.000 seconds).
+Test Suite 'AgentTokenTests' passed at 2026-09-13 08:48:06.730.
+	 Executed 21 tests, with 0 failures (0 unexpected) in 0.053 (0.056) seconds
+Test Suite 'BootstrapStepTests' started at 2026-09-13 08:48:06.730.
 Test Case '-[ServerOSTests.BootstrapStepTests testDoneIsLast]' started.
 Test Case '-[ServerOSTests.BootstrapStepTests testDoneIsLast]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.BootstrapStepTests testEnrollmentHappensBeforeTheAgentIsStarted]' started.
-Test Case '-[ServerOSTests.BootstrapStepTests testEnrollmentHappensBeforeTheAgentIsStarted]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.BootstrapStepTests testEnrollmentHappensBeforeTheAgentIsStarted]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.BootstrapStepTests testEveryStepHasATitle]' started.
 Test Case '-[ServerOSTests.BootstrapStepTests testEveryStepHasATitle]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.BootstrapStepTests testEveryTitleIsInTheProgressiveTense]' started.
-Test Case '-[ServerOSTests.BootstrapStepTests testEveryTitleIsInTheProgressiveTense]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.BootstrapStepTests testEveryTitleIsInTheProgressiveTense]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.BootstrapStepTests testInstallOutcomeIsReadOffTheOneLineTheInstallerPrints]' started.
-Test Case '-[ServerOSTests.BootstrapStepTests testInstallOutcomeIsReadOffTheOneLineTheInstallerPrints]' passed (0.003 seconds).
+Test Case '-[ServerOSTests.BootstrapStepTests testInstallOutcomeIsReadOffTheOneLineTheInstallerPrints]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.BootstrapStepTests testLabelledFieldsReadsTheRequirementsScriptOutput]' started.
-Test Case '-[ServerOSTests.BootstrapStepTests testLabelledFieldsReadsTheRequirementsScriptOutput]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.BootstrapStepTests testLabelledFieldsReadsTheRequirementsScriptOutput]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.BootstrapStepTests testProbeHandlesAServerWithNoOSRelease]' started.
-Test Case '-[ServerOSTests.BootstrapStepTests testProbeHandlesAServerWithNoOSRelease]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.BootstrapStepTests testProbeHandlesAServerWithNoOSRelease]' passed (0.003 seconds).
 Test Case '-[ServerOSTests.BootstrapStepTests testProbeNeedsAtLeastASystemAndAMachine]' started.
 Test Case '-[ServerOSTests.BootstrapStepTests testProbeNeedsAtLeastASystemAndAMachine]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.BootstrapStepTests testProbeNoticesSomethingThatIsNotLinux]' started.
-Test Case '-[ServerOSTests.BootstrapStepTests testProbeNoticesSomethingThatIsNotLinux]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.BootstrapStepTests testProbeNoticesSomethingThatIsNotLinux]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.BootstrapStepTests testProbeParsesUbuntu]' started.
-Test Case '-[ServerOSTests.BootstrapStepTests testProbeParsesUbuntu]' passed (0.002 seconds).
+Test Case '-[ServerOSTests.BootstrapStepTests testProbeParsesUbuntu]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.BootstrapStepTests testProgressOrderCoversEveryStepExactlyOnce]' started.
 Test Case '-[ServerOSTests.BootstrapStepTests testProgressOrderCoversEveryStepExactlyOnce]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.BootstrapStepTests testShellQuotingSurvivesTheNamesPeopleGiveTheirMacs]' started.
-Test Case '-[ServerOSTests.BootstrapStepTests testShellQuotingSurvivesTheNamesPeopleGiveTheirMacs]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.BootstrapStepTests testShellQuotingSurvivesTheNamesPeopleGiveTheirMacs]' passed (0.003 seconds).
+Test Case '-[ServerOSTests.BootstrapStepTests testTheReadinessProbeAsksTheAgentRatherThanSystemd]' started.
+Test Case '-[ServerOSTests.BootstrapStepTests testTheReadinessProbeAsksTheAgentRatherThanSystemd]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.BootstrapStepTests testTheReadinessProbeCarriesSudoWhenTheAccountNeedsIt]' started.
+Test Case '-[ServerOSTests.BootstrapStepTests testTheReadinessProbeCarriesSudoWhenTheAccountNeedsIt]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.BootstrapStepTests testTheReadinessProbeGivesUpAndShowsTheLog]' started.
+Test Case '-[ServerOSTests.BootstrapStepTests testTheReadinessProbeGivesUpAndShowsTheLog]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.BootstrapStepTests testTheReadinessProbeSleepsInWholeSeconds]' started.
+Test Case '-[ServerOSTests.BootstrapStepTests testTheReadinessProbeSleepsInWholeSeconds]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.BootstrapStepTests testTitlesAreDistinct]' started.
 Test Case '-[ServerOSTests.BootstrapStepTests testTitlesAreDistinct]' passed (0.000 seconds).
-Test Suite 'BootstrapStepTests' passed at 2026-09-12 23:48:59.410.
-	 Executed 13 tests, with 0 failures (0 unexpected) in 0.011 (0.013) seconds
-Test Suite 'EnrollmentBundleTests' started at 2026-09-12 23:48:59.410.
+Test Suite 'BootstrapStepTests' passed at 2026-09-13 08:48:06.749.
+	 Executed 17 tests, with 0 failures (0 unexpected) in 0.013 (0.018) seconds
+Test Suite 'DatabaseProvisionerTests' started at 2026-09-13 08:48:06.749.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAClusterBoundToOnePrivateInterfaceIsNotReachable]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAClusterBoundToOnePrivateInterfaceIsNotReachable]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAClusterWithNoListenerAtAllIsNotReachable]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAClusterWithNoListenerAtAllIsNotReachable]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAFailedAdministratorConnectionCarriesWhatTheServerSaid]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAFailedAdministratorConnectionCarriesWhatTheServerSaid]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAFailureNamesTheStepAndSaysRetryingIsSafe]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAFailureNamesTheStepAndSaysRetryingIsSafe]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAFullyProvisionedServerIsRecognised]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAFullyProvisionedServerIsRecognised]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testALoopbackEntryAmongOthersIsFound]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testALoopbackEntryAmongOthersIsFound]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAnAlreadyProvisionedServerDoesNotClaimToHaveCreatedAnything]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAnAlreadyProvisionedServerDoesNotClaimToHaveCreatedAnything]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAnImpossibleServerIsNotOfferedARetry]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAnImpossibleServerIsNotOfferedARetry]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAProbeWithNoRoleIsNotConsideredProvisioned]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAProbeWithNoRoleIsNotConsideredProvisioned]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testARoleThatExistsButCannotLogInStillNeedsWork]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testARoleThatExistsButCannotLogInStillNeedsWork]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testARoleWithoutMonitorStillNeedsWork]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testARoleWithoutMonitorStillNeedsWork]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAStockDebianClusterIsReachableOnLoopback]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testAStockDebianClusterIsReachableOnLoopback]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testBecomingPostgresDoesNotDependOnSudoOrALoginShell]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testBecomingPostgresDoesNotDependOnSudoOrALoginShell]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testEveryAdministratorQueryBecomesThePostgresUser]' started.
+2026-09-13 08:48:13.645803+0200 ServerOS[71904:801590] [connection] nw_socket_handle_socket_event [C1.1.1:2] Socket SO_ERROR [61: Connection refused]
+2026-09-13 08:48:13.647114+0200 ServerOS[71904:801590] [connection] nw_endpoint_flow_failed_with_error [C1.1.1 ::1.55456 in_progress socket-flow (satisfied (Path is satisfied), viable, interface: lo0)] already failing, returning
+/Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/DatabaseProvisionerTests.swift:87: error: -[ServerOSTests.DatabaseProvisionerTests testEveryAdministratorQueryBecomesThePostgresUser] : XCTAssertEqual failed: ("6") is not equal to ("7") - every psql call has to run as postgres, not as whoever we are
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testEveryAdministratorQueryBecomesThePostgresUser]' failed (7.090 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testGeneratedPasswordsAreLongAndUnique]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testGeneratedPasswordsAreLongAndUnique]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testGeneratedPasswordsSurviveShellAndSQLWithoutEscaping]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testGeneratedPasswordsSurviveShellAndSQLWithoutEscaping]' passed (0.004 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testListeningOnEverythingCountsAsLoopback]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testListeningOnEverythingCountsAsLoopback]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testOrdinaryOutputIsPassedThrough]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testOrdinaryOutputIsPassedThrough]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testOutputThatCouldEchoThePasswordIsWithheld]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testOutputThatCouldEchoThePasswordIsWithheld]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testProbeOutputIsParsedFieldByField]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testProbeOutputIsParsedFieldByField]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testRedactionOfEmptyOutputStillSaysSomething]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testRedactionOfEmptyOutputStillSaysSomething]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testSQLEscapingDoublesQuotes]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testSQLEscapingDoublesQuotes]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testSuccessIsOnlyClaimedWhenTheSignInWasActuallyChecked]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testSuccessIsOnlyClaimedWhenTheSignInWasActuallyChecked]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testTheListenerAndPortAreReadFromTheProbe]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testTheListenerAndPortAreReadFromTheProbe]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testTheProbeRunsARealCommandRatherThanAnOption]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testTheProbeRunsARealCommandRatherThanAnOption]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testTheSecretItselfIsNeverPassedThrough]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testTheSecretItselfIsNeverPassedThrough]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testTheSignInErrorSurvivesRedaction]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testTheSignInErrorSurvivesRedaction]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testTheSummarySaysWhatActuallyChanged]' started.
+Test Case '-[ServerOSTests.DatabaseProvisionerTests testTheSummarySaysWhatActuallyChanged]' passed (0.001 seconds).
+Test Suite 'DatabaseProvisionerTests' failed at 2026-09-13 08:48:13.912.
+	 Executed 28 tests, with 1 failure (0 unexpected) in 7.109 (7.163) seconds
+Test Suite 'EnrollmentBundleTests' started at 2026-09-13 08:48:13.912.
 Test Case '-[ServerOSTests.EnrollmentBundleTests testBase64URLDecodesTheAgentsAlphabet]' started.
 Test Case '-[ServerOSTests.EnrollmentBundleTests testBase64URLDecodesTheAgentsAlphabet]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.EnrollmentBundleTests testBase64URLReturnsNilRatherThanGuessing]' started.
@@ -612,48 +822,48 @@ Test Case '-[ServerOSTests.EnrollmentBundleTests testBase64URLReturnsNilRatherTh
 Test Case '-[ServerOSTests.EnrollmentBundleTests testFindsTheBundleAmongSSHSessionNoise]' started.
 Test Case '-[ServerOSTests.EnrollmentBundleTests testFindsTheBundleAmongSSHSessionNoise]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.EnrollmentBundleTests testParsesAWellFormedBundle]' started.
-Test Case '-[ServerOSTests.EnrollmentBundleTests testParsesAWellFormedBundle]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.EnrollmentBundleTests testParsesAWellFormedBundle]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.EnrollmentBundleTests testRejectsASecretThatIsLongEnoughButNotBase64]' started.
-Test Case '-[ServerOSTests.EnrollmentBundleTests testRejectsASecretThatIsLongEnoughButNotBase64]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.EnrollmentBundleTests testRejectsASecretThatIsLongEnoughButNotBase64]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.EnrollmentBundleTests testRejectsMalformedBundles]' started.
 Test Case '-[ServerOSTests.EnrollmentBundleTests testRejectsMalformedBundles]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.EnrollmentBundleTests testTakesTheFirstBundleWhenTheOutputSomehowHasTwo]' started.
-Test Case '-[ServerOSTests.EnrollmentBundleTests testTakesTheFirstBundleWhenTheOutputSomehowHasTwo]' passed (0.003 seconds).
+Test Case '-[ServerOSTests.EnrollmentBundleTests testTakesTheFirstBundleWhenTheOutputSomehowHasTwo]' passed (0.004 seconds).
 Test Case '-[ServerOSTests.EnrollmentBundleTests testTheVersionFieldIsOptional]' started.
-Test Case '-[ServerOSTests.EnrollmentBundleTests testTheVersionFieldIsOptional]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.EnrollmentBundleTests testTheVersionFieldIsOptional]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.EnrollmentBundleTests testToleratesCarriageReturnsAndIndentation]' started.
 Test Case '-[ServerOSTests.EnrollmentBundleTests testToleratesCarriageReturnsAndIndentation]' passed (0.001 seconds).
-Test Suite 'EnrollmentBundleTests' passed at 2026-09-12 23:48:59.421.
-	 Executed 9 tests, with 0 failures (0 unexpected) in 0.007 (0.011) seconds
-Test Suite 'FormattingTests' started at 2026-09-12 23:48:59.421.
+Test Suite 'EnrollmentBundleTests' passed at 2026-09-13 08:48:13.928.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.010 (0.015) seconds
+Test Suite 'FormattingTests' started at 2026-09-13 08:48:13.928.
 Test Case '-[ServerOSTests.FormattingTests testAbsoluteTimestampsAndTheUnknownCase]' started.
 Test Case '-[ServerOSTests.FormattingTests testAbsoluteTimestampsAndTheUnknownCase]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.FormattingTests testAnythingWithinAFewSecondsReadsAsJustNow]' started.
 Test Case '-[ServerOSTests.FormattingTests testAnythingWithinAFewSecondsReadsAsJustNow]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.FormattingTests testBytesRendersAUnit]' started.
-Test Case '-[ServerOSTests.FormattingTests testBytesRendersAUnit]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.FormattingTests testBytesRendersAUnit]' passed (0.002 seconds).
 Test Case '-[ServerOSTests.FormattingTests testBytesUsesDecimalUnitsLikeTheRestOfThePlatform]' started.
 Test Case '-[ServerOSTests.FormattingTests testBytesUsesDecimalUnitsLikeTheRestOfThePlatform]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.FormattingTests testCapitalisingFirstLetterLeavesTheRestAlone]' started.
 Test Case '-[ServerOSTests.FormattingTests testCapitalisingFirstLetterLeavesTheRestAlone]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.FormattingTests testCompactDurationForTightTableCells]' started.
-Test Case '-[ServerOSTests.FormattingTests testCompactDurationForTightTableCells]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.FormattingTests testCompactDurationForTightTableCells]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.FormattingTests testContainerStateUsesOurVocabulary]' started.
-Test Case '-[ServerOSTests.FormattingTests testContainerStateUsesOurVocabulary]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.FormattingTests testContainerStateUsesOurVocabulary]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.FormattingTests testCount]' started.
-Test Case '-[ServerOSTests.FormattingTests testCount]' passed (0.003 seconds).
+Test Case '-[ServerOSTests.FormattingTests testCount]' passed (0.002 seconds).
 Test Case '-[ServerOSTests.FormattingTests testDecimalKeepsThePlacesThatCarryMeaning]' started.
-Test Case '-[ServerOSTests.FormattingTests testDecimalKeepsThePlacesThatCarryMeaning]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.FormattingTests testDecimalKeepsThePlacesThatCarryMeaning]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.FormattingTests testDurationAcceptsTheAgentsInt64s]' started.
 Test Case '-[ServerOSTests.FormattingTests testDurationAcceptsTheAgentsInt64s]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.FormattingTests testDurationUsesOneUnit]' started.
 Test Case '-[ServerOSTests.FormattingTests testDurationUsesOneUnit]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.FormattingTests testFileMode]' started.
-Test Case '-[ServerOSTests.FormattingTests testFileMode]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.FormattingTests testFileMode]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.FormattingTests testListHonoursALowerLimit]' started.
-Test Case '-[ServerOSTests.FormattingTests testListHonoursALowerLimit]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.FormattingTests testListHonoursALowerLimit]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.FormattingTests testListPhrasing]' started.
-Test Case '-[ServerOSTests.FormattingTests testListPhrasing]' passed (0.002 seconds).
+Test Case '-[ServerOSTests.FormattingTests testListPhrasing]' passed (0.003 seconds).
 Test Case '-[ServerOSTests.FormattingTests testLogGutterTime]' started.
 Test Case '-[ServerOSTests.FormattingTests testLogGutterTime]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.FormattingTests testModeStringReadsLikeLsMinusL]' started.
@@ -665,52 +875,52 @@ Test Case '-[ServerOSTests.FormattingTests testOlderTimesGetARelativePhrase]' pa
 Test Case '-[ServerOSTests.FormattingTests testPercentOfNothing]' started.
 Test Case '-[ServerOSTests.FormattingTests testPercentOfNothing]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.FormattingTests testPercentRoundsToWholeNumbers]' started.
-Test Case '-[ServerOSTests.FormattingTests testPercentRoundsToWholeNumbers]' passed (0.003 seconds).
+Test Case '-[ServerOSTests.FormattingTests testPercentRoundsToWholeNumbers]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.FormattingTests testProcessStateInWords]' started.
 Test Case '-[ServerOSTests.FormattingTests testProcessStateInWords]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.FormattingTests testRate]' started.
-Test Case '-[ServerOSTests.FormattingTests testRate]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.FormattingTests testRate]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.FormattingTests testRelativeAcceptsAgentTimestamps]' started.
 Test Case '-[ServerOSTests.FormattingTests testRelativeAcceptsAgentTimestamps]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.FormattingTests testTruncateBreaksOnAWordAndUsesARealEllipsis]' started.
 Test Case '-[ServerOSTests.FormattingTests testTruncateBreaksOnAWordAndUsesARealEllipsis]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.FormattingTests testTruncateOnAStringWithNoSpaces]' started.
-Test Case '-[ServerOSTests.FormattingTests testTruncateOnAStringWithNoSpaces]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.FormattingTests testTruncateOnAStringWithNoSpaces]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.FormattingTests testUnknownSizesAreAnEmDashRatherThanZero]' started.
-Test Case '-[ServerOSTests.FormattingTests testUnknownSizesAreAnEmDashRatherThanZero]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.FormattingTests testUnknownSizesAreAnEmDashRatherThanZero]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.FormattingTests testUsagePhrasing]' started.
-Test Case '-[ServerOSTests.FormattingTests testUsagePhrasing]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.FormattingTests testUsagePhrasing]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.FormattingTests testZeroBytesIsNumericRatherThanSpelledOut]' started.
 Test Case '-[ServerOSTests.FormattingTests testZeroBytesIsNumericRatherThanSpelledOut]' passed (0.000 seconds).
-Test Suite 'FormattingTests' passed at 2026-09-12 23:48:59.454.
-	 Executed 28 tests, with 0 failures (0 unexpected) in 0.023 (0.033) seconds
-Test Suite 'HealthEvaluatorTests' started at 2026-09-12 23:48:59.454.
+Test Suite 'FormattingTests' passed at 2026-09-13 08:48:13.963.
+	 Executed 28 tests, with 0 failures (0 unexpected) in 0.022 (0.036) seconds
+Test Suite 'HealthEvaluatorTests' started at 2026-09-13 08:48:13.964.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testActionTitlesChangeWithTheirTarget]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testActionTitlesChangeWithTheirTarget]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testActionTitlesChangeWithTheirTarget]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testAFilesystemWithNoUsageFigureIsIgnored]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testAFilesystemWithNoUsageFigureIsIgnored]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testAFilesystemWithNoUsageFigureIsIgnored]' passed (0.005 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testAFullVolumeIsNotAveragedAwayByARoomyOne]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testAFullVolumeIsNotAveragedAwayByARoomyOne]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testAFullVolumeIsNotAveragedAwayByARoomyOne]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testAHealthyServerHasNoFindingsAtAll]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testAHealthyServerHasNoFindingsAtAll]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testAnUnrecognisedPostgresHealthIsIgnoredRatherThanGuessed]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testAnUnrecognisedPostgresHealthIsIgnoredRatherThanGuessed]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testAnUnrecognisedPostgresHealthIsIgnoredRatherThanGuessed]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testAServerWithNoSwapIsNeverReportedAsSwapping]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testAServerWithNoSwapIsNeverReportedAsSwapping]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testASingleCoreServerPhrasesTheCoreCountCorrectly]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testASingleCoreServerPhrasesTheCoreCountCorrectly]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testContactWithoutMetricsIsStillHealthy]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testContactWithoutMetricsIsStillHealthy]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testContactWithoutMetricsIsStillHealthy]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testCriticalOutranksWarning]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testCriticalOutranksWarning]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testCriticalOutranksWarning]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testDiskAtTheCriticalThresholdNamesWhatIsLeft]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testDiskAtTheCriticalThresholdNamesWhatIsLeft]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testDiskAtTheWarningThreshold]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testDiskAtTheWarningThreshold]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testDiskCriticalWithoutAFreeFigureStillReads]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testDiskCriticalWithoutAFreeFigureStillReads]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testDiskCriticalWithoutAFreeFigureStillReads]' passed (0.003 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testDiskJustBelowTheWarningThreshold]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testDiskJustBelowTheWarningThreshold]' passed (0.003 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testDiskJustBelowTheWarningThreshold]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testEveryStateCarriesWordsAndAShapeNotJustAColour]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testEveryStateCarriesWordsAndAShapeNotJustAColour]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testFindingsComeBackMostSevereFirst]' started.
@@ -718,7 +928,7 @@ Test Case '-[ServerOSTests.HealthEvaluatorTests testFindingsComeBackMostSevereFi
 Test Case '-[ServerOSTests.HealthEvaluatorTests testFleetSummaryCombinesEveryKindOfProblem]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testFleetSummaryCombinesEveryKindOfProblem]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testFleetSummaryLeadsWithTheUrgentCount]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testFleetSummaryLeadsWithTheUrgentCount]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testFleetSummaryLeadsWithTheUrgentCount]' passed (0.004 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testFleetSummaryPluralises]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testFleetSummaryPluralises]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testFleetSummaryWithNoServers]' started.
@@ -728,15 +938,15 @@ Test Case '-[ServerOSTests.HealthEvaluatorTests testFleetSummaryWithOneHealthySe
 Test Case '-[ServerOSTests.HealthEvaluatorTests testFleetSummaryWithSeveralHealthyServers]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testFleetSummaryWithSeveralHealthyServers]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testHealthyWhenNothingIsWrong]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testHealthyWhenNothingIsWrong]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testHealthyWhenNothingIsWrong]' passed (0.005 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testHighCPUWithAgreeingLoadIsSaturation]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testHighCPUWithAgreeingLoadIsSaturation]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testHighCPUWithAgreeingLoadIsSaturation]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testHighCPUWithLowLoadIsJustABusyMoment]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testHighCPUWithLowLoadIsJustABusyMoment]' passed (0.004 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testHighCPUWithLowLoadIsJustABusyMoment]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testLoadJustBelowTheThresholdIsQuiet]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testLoadJustBelowTheThresholdIsQuiet]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testManyFailedServicesAreSummarised]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testManyFailedServicesAreSummarised]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testManyFailedServicesAreSummarised]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testMemoryAtTheCriticalThresholdWarnsAboutTheOOMKiller]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testMemoryAtTheCriticalThresholdWarnsAboutTheOOMKiller]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testMemoryAtTheWarningThreshold]' started.
@@ -744,35 +954,35 @@ Test Case '-[ServerOSTests.HealthEvaluatorTests testMemoryAtTheWarningThreshold]
 Test Case '-[ServerOSTests.HealthEvaluatorTests testMemoryJustBelowTheWarningThreshold]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testMemoryJustBelowTheWarningThreshold]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testNothingHeardYetIsUnknownRatherThanHealthy]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testNothingHeardYetIsUnknownRatherThanHealthy]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testNothingHeardYetIsUnknownRatherThanHealthy]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testOneFailedServiceIsNamed]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testOneFailedServiceIsNamed]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testOneStoppedContainerIsOnlyAWarning]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testOneStoppedContainerIsOnlyAWarning]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testOneUnhealthyContainerIsCritical]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testOneUnhealthyContainerIsCritical]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testOneUnhealthyContainerIsCritical]' passed (0.005 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testOnlyTheWorstFilesystemIsReported]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testOnlyTheWorstFilesystemIsReported]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testOnlyTheWorstFilesystemIsReported]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testPostgresCriticalUsesTheDatabasesOwnReason]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testPostgresCriticalUsesTheDatabasesOwnReason]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testPostgresHealthyProducesNoFinding]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testPostgresHealthyProducesNoFinding]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testPostgresWarningWithoutAReasonStillReads]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testPostgresWarningWithoutAReasonStillReads]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testPostgresWarningWithoutAReasonStillReads]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testSeveralFailedServicesAreCounted]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testSeveralFailedServicesAreCounted]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testSeveralFailedServicesAreCounted]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testSeveralStoppedContainersAreCounted]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testSeveralStoppedContainersAreCounted]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testSeveralStoppedContainersAreCounted]' passed (0.004 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testSeveralUnhealthyContainersAreCounted]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testSeveralUnhealthyContainersAreCounted]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testSeverityOrdering]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testSeverityOrdering]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testSeverityOrdering]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testSilenceBeyondTheThresholdReadsAsOffline]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testSilenceBeyondTheThresholdReadsAsOffline]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testSilenceInsideTheThresholdIsNotOffline]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testSilenceInsideTheThresholdIsNotOffline]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testSustainedLoadPerCoreIsAWarning]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testSustainedLoadPerCoreIsAWarning]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testSustainedLoadPerCoreIsAWarning]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testSwapJustBelowTheThresholdIsQuiet]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testSwapJustBelowTheThresholdIsQuiet]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testSwappingIsWorthSayingEvenWhenMemoryLooksFine]' started.
@@ -782,61 +992,55 @@ Test Case '-[ServerOSTests.HealthEvaluatorTests testThreeProblemsAtTheSameSeveri
 Test Case '-[ServerOSTests.HealthEvaluatorTests testTwoProblemsAtTheSameSeveritySayHowMany]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testTwoProblemsAtTheSameSeveritySayHowMany]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testUnreachableBeatsEverythingElse]' started.
-Test Case '-[ServerOSTests.HealthEvaluatorTests testUnreachableBeatsEverythingElse]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.HealthEvaluatorTests testUnreachableBeatsEverythingElse]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testWarmingUpDoesNotSuppressDiskFindings]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testWarmingUpDoesNotSuppressDiskFindings]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.HealthEvaluatorTests testWarmingUpSuppressesCPUFindings]' started.
 Test Case '-[ServerOSTests.HealthEvaluatorTests testWarmingUpSuppressesCPUFindings]' passed (0.000 seconds).
-Test Suite 'HealthEvaluatorTests' passed at 2026-09-12 23:48:59.518.
-	 Executed 51 tests, with 0 failures (0 unexpected) in 0.030 (0.064) seconds
-Test Suite 'KeychainTests' started at 2026-09-12 23:48:59.518.
+Test Suite 'HealthEvaluatorTests' passed at 2026-09-13 08:48:14.034.
+	 Executed 51 tests, with 0 failures (0 unexpected) in 0.048 (0.071) seconds
+Test Suite 'KeychainTests' started at 2026-09-13 08:48:14.035.
 Test Case '-[ServerOSTests.KeychainTests testACredentialNeverPrintsItsSecrets]' started.
-Test Case '-[ServerOSTests.KeychainTests testACredentialNeverPrintsItsSecrets]' passed (0.006 seconds).
+Test Case '-[ServerOSTests.KeychainTests testACredentialNeverPrintsItsSecrets]' passed (0.003 seconds).
 Test Case '-[ServerOSTests.KeychainTests testAllAccounts]' started.
-/Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/KeychainTests.swift:47: -[ServerOSTests.KeychainTests testAllAccounts] : Test skipped - The Keychain is not usable in this environment: unexpectedStatus(-34018)
-Test Case '-[ServerOSTests.KeychainTests testAllAccounts]' skipped (0.004 seconds).
+2026-09-13 08:48:14.038360+0200 ServerOS[71904:801559] [logging-persist] cannot open file at line 51044 of [f0ca7bba1c]
+2026-09-13 08:48:14.038370+0200 ServerOS[71904:801559] [logging-persist] os_unix.c:51044: (2) open(/private/var/db/DetachedSignatures) - No such file or directory
+Test Case '-[ServerOSTests.KeychainTests testAllAccounts]' passed (0.070 seconds).
 Test Case '-[ServerOSTests.KeychainTests testAMissingItemIsNilRatherThanAnError]' started.
-/Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/KeychainTests.swift:47: -[ServerOSTests.KeychainTests testAMissingItemIsNilRatherThanAnError] : Test skipped - The Keychain is not usable in this environment: unexpectedStatus(-34018)
-Test Case '-[ServerOSTests.KeychainTests testAMissingItemIsNilRatherThanAnError]' skipped (0.001 seconds).
+Test Case '-[ServerOSTests.KeychainTests testAMissingItemIsNilRatherThanAnError]' passed (0.012 seconds).
 Test Case '-[ServerOSTests.KeychainTests testCredentialStoreRoundTrip]' started.
-/Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/KeychainTests.swift:47: -[ServerOSTests.KeychainTests testCredentialStoreRoundTrip] : Test skipped - The Keychain is not usable in this environment: unexpectedStatus(-34018)
-Test Case '-[ServerOSTests.KeychainTests testCredentialStoreRoundTrip]' skipped (0.002 seconds).
+Test Case '-[ServerOSTests.KeychainTests testCredentialStoreRoundTrip]' passed (0.035 seconds).
 Test Case '-[ServerOSTests.KeychainTests testDelete]' started.
-/Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/KeychainTests.swift:47: -[ServerOSTests.KeychainTests testDelete] : Test skipped - The Keychain is not usable in this environment: unexpectedStatus(-34018)
-Test Case '-[ServerOSTests.KeychainTests testDelete]' skipped (0.001 seconds).
+Test Case '-[ServerOSTests.KeychainTests testDelete]' passed (0.031 seconds).
 Test Case '-[ServerOSTests.KeychainTests testDeletingSomethingThatIsNotThereSucceeds]' started.
-/Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/KeychainTests.swift:47: -[ServerOSTests.KeychainTests testDeletingSomethingThatIsNotThereSucceeds] : Test skipped - The Keychain is not usable in this environment: unexpectedStatus(-34018)
-Test Case '-[ServerOSTests.KeychainTests testDeletingSomethingThatIsNotThereSucceeds]' skipped (0.001 seconds).
+Test Case '-[ServerOSTests.KeychainTests testDeletingSomethingThatIsNotThereSucceeds]' passed (0.013 seconds).
 Test Case '-[ServerOSTests.KeychainTests testEmptyDataRoundTrips]' started.
-/Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/KeychainTests.swift:47: -[ServerOSTests.KeychainTests testEmptyDataRoundTrips] : Test skipped - The Keychain is not usable in this environment: unexpectedStatus(-34018)
-Test Case '-[ServerOSTests.KeychainTests testEmptyDataRoundTrips]' skipped (0.001 seconds).
+Test Case '-[ServerOSTests.KeychainTests testEmptyDataRoundTrips]' passed (0.039 seconds).
 Test Case '-[ServerOSTests.KeychainTests testKeychainErrorsProduceASentenceRatherThanAStatusCode]' started.
-Test Case '-[ServerOSTests.KeychainTests testKeychainErrorsProduceASentenceRatherThanAStatusCode]' passed (0.004 seconds).
+Test Case '-[ServerOSTests.KeychainTests testKeychainErrorsProduceASentenceRatherThanAStatusCode]' passed (0.005 seconds).
 Test Case '-[ServerOSTests.KeychainTests testLoadingAServerWithNoCredentialIsNil]' started.
-/Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/KeychainTests.swift:47: -[ServerOSTests.KeychainTests testLoadingAServerWithNoCredentialIsNil] : Test skipped - The Keychain is not usable in this environment: unexpectedStatus(-34018)
-Test Case '-[ServerOSTests.KeychainTests testLoadingAServerWithNoCredentialIsNil]' skipped (0.001 seconds).
+Test Case '-[ServerOSTests.KeychainTests testLoadingAServerWithNoCredentialIsNil]' passed (0.011 seconds).
 Test Case '-[ServerOSTests.KeychainTests testStoreAndRead]' started.
-/Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/KeychainTests.swift:47: -[ServerOSTests.KeychainTests testStoreAndRead] : Test skipped - The Keychain is not usable in this environment: unexpectedStatus(-34018)
-Test Case '-[ServerOSTests.KeychainTests testStoreAndRead]' skipped (0.001 seconds).
+Test Case '-[ServerOSTests.KeychainTests testStoreAndRead]' passed (0.022 seconds).
+Test Case '-[ServerOSTests.KeychainTests testStoringWorksEvenWithoutDataProtectionEntitlement]' started.
+Test Case '-[ServerOSTests.KeychainTests testStoringWorksEvenWithoutDataProtectionEntitlement]' passed (0.019 seconds).
 Test Case '-[ServerOSTests.KeychainTests testTwoServicesDoNotSeeEachOther]' started.
-/Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/KeychainTests.swift:47: -[ServerOSTests.KeychainTests testTwoServicesDoNotSeeEachOther] : Test skipped - The Keychain is not usable in this environment: unexpectedStatus(-34018)
-Test Case '-[ServerOSTests.KeychainTests testTwoServicesDoNotSeeEachOther]' skipped (0.001 seconds).
+Test Case '-[ServerOSTests.KeychainTests testTwoServicesDoNotSeeEachOther]' passed (0.035 seconds).
 Test Case '-[ServerOSTests.KeychainTests testWritingTwiceOverwritesRatherThanDuplicating]' started.
-/Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/KeychainTests.swift:47: -[ServerOSTests.KeychainTests testWritingTwiceOverwritesRatherThanDuplicating] : Test skipped - The Keychain is not usable in this environment: unexpectedStatus(-34018)
-Test Case '-[ServerOSTests.KeychainTests testWritingTwiceOverwritesRatherThanDuplicating]' skipped (0.001 seconds).
-Test Suite 'KeychainTests' passed at 2026-09-12 23:48:59.547.
-	 Executed 12 tests, with 10 tests skipped and 0 failures (0 unexpected) in 0.024 (0.029) seconds
-Test Suite 'OpenSSHKeyParserTests' started at 2026-09-12 23:48:59.547.
+Test Case '-[ServerOSTests.KeychainTests testWritingTwiceOverwritesRatherThanDuplicating]' passed (0.036 seconds).
+Test Suite 'KeychainTests' passed at 2026-09-13 08:48:14.369.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.331 (0.334) seconds
+Test Suite 'OpenSSHKeyParserTests' started at 2026-09-13 08:48:14.369.
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testACommentAndPaddingDoNotConfuseTheParser]' started.
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testACommentAndPaddingDoNotConfuseTheParser]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testALegacyEncryptedPEMIsCaughtByItsHeader]' started.
-Test Case '-[ServerOSTests.OpenSSHKeyParserTests testALegacyEncryptedPEMIsCaughtByItsHeader]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.OpenSSHKeyParserTests testALegacyEncryptedPEMIsCaughtByItsHeader]' passed (0.002 seconds).
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testAnEncryptedKeyExplainsBothWaysOut]' started.
-Test Case '-[ServerOSTests.OpenSSHKeyParserTests testAnEncryptedKeyExplainsBothWaysOut]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.OpenSSHKeyParserTests testAnEncryptedKeyExplainsBothWaysOut]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testAnRSAKeySaysPlainlyThatRSAIsNotSupported]' started.
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testAnRSAKeySaysPlainlyThatRSAIsNotSupported]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testAP521KeyIsRefusedByName]' started.
-Test Case '-[ServerOSTests.OpenSSHKeyParserTests testAP521KeyIsRefusedByName]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.OpenSSHKeyParserTests testAP521KeyIsRefusedByName]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testATruncatedContainerIsReportedAsDamagedNotAsUnsupported]' started.
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testATruncatedContainerIsReportedAsDamagedNotAsUnsupported]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testParsedKeysBecomeNIOKeys]' started.
@@ -844,53 +1048,95 @@ Test Case '-[ServerOSTests.OpenSSHKeyParserTests testParsedKeysBecomeNIOKeys]' p
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testParsesAnECDSAP256Key]' started.
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testParsesAnECDSAP256Key]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testParsesARealUnencryptedEd25519Key]' started.
-Test Case '-[ServerOSTests.OpenSSHKeyParserTests testParsesARealUnencryptedEd25519Key]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.OpenSSHKeyParserTests testParsesARealUnencryptedEd25519Key]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testParsesASEC1PEMKey]' started.
-Test Case '-[ServerOSTests.OpenSSHKeyParserTests testParsesASEC1PEMKey]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.OpenSSHKeyParserTests testParsesASEC1PEMKey]' passed (0.002 seconds).
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testSomethingThatIsNotAKeyAtAll]' started.
-Test Case '-[ServerOSTests.OpenSSHKeyParserTests testSomethingThatIsNotAKeyAtAll]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.OpenSSHKeyParserTests testSomethingThatIsNotAKeyAtAll]' passed (0.011 seconds).
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testTheParsedSeedReproducesTheKeysOwnPublicKey]' started.
 Test Case '-[ServerOSTests.OpenSSHKeyParserTests testTheParsedSeedReproducesTheKeysOwnPublicKey]' passed (0.001 seconds).
-Test Suite 'OpenSSHKeyParserTests' passed at 2026-09-12 23:48:59.558.
-	 Executed 12 tests, with 0 failures (0 unexpected) in 0.008 (0.011) seconds
-Test Suite 'SSHKeyTests' started at 2026-09-12 23:48:59.558.
+Test Suite 'OpenSSHKeyParserTests' passed at 2026-09-13 08:48:14.393.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.021 (0.023) seconds
+Test Suite 'SSHKeyTests' started at 2026-09-13 08:48:14.393.
 Test Case '-[ServerOSTests.SSHKeyTests testACommentWithSpacesIsStillOneLine]' started.
 Test Case '-[ServerOSTests.SSHKeyTests testACommentWithSpacesIsStillOneLine]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testADifferentKeyDoesNotMatch]' started.
-Test Case '-[ServerOSTests.SSHKeyTests testADifferentKeyDoesNotMatch]' passed (0.004 seconds).
+Test Case '-[ServerOSTests.SSHKeyTests testADifferentKeyDoesNotMatch]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testBignumIsStrippedOfPaddingAndWidenedToTheCurveSize]' started.
-Test Case '-[ServerOSTests.SSHKeyTests testBignumIsStrippedOfPaddingAndWidenedToTheCurveSize]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.SSHKeyTests testBignumIsStrippedOfPaddingAndWidenedToTheCurveSize]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testCommentCannotSmuggleANewlineIntoAuthorizedKeys]' started.
-Test Case '-[ServerOSTests.SSHKeyTests testCommentCannotSmuggleANewlineIntoAuthorizedKeys]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.SSHKeyTests testCommentCannotSmuggleANewlineIntoAuthorizedKeys]' passed (0.006 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testEmptyCommentStillProducesAThreeFieldLine]' started.
 Test Case '-[ServerOSTests.SSHKeyTests testEmptyCommentStillProducesAThreeFieldLine]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testFingerprintIsTheFormatSSHKeygenPrints]' started.
-Test Case '-[ServerOSTests.SSHKeyTests testFingerprintIsTheFormatSSHKeygenPrints]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.SSHKeyTests testFingerprintIsTheFormatSSHKeygenPrints]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testFingerprintOfAPublicKeyLineMatchesTheKeypairsOwn]' started.
-Test Case '-[ServerOSTests.SSHKeyTests testFingerprintOfAPublicKeyLineMatchesTheKeypairsOwn]' passed (0.002 seconds).
+Test Case '-[ServerOSTests.SSHKeyTests testFingerprintOfAPublicKeyLineMatchesTheKeypairsOwn]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testGeneratedKeyLooksLikeAnEd25519AuthorizedKeysLine]' started.
-Test Case '-[ServerOSTests.SSHKeyTests testGeneratedKeyLooksLikeAnEd25519AuthorizedKeysLine]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.SSHKeyTests testGeneratedKeyLooksLikeAnEd25519AuthorizedKeysLine]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testGeneratedKeysAreDifferentEveryTime]' started.
 Test Case '-[ServerOSTests.SSHKeyTests testGeneratedKeysAreDifferentEveryTime]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testKnownSeedProducesTheKnownPublicKeyAndFingerprint]' started.
-Test Case '-[ServerOSTests.SSHKeyTests testKnownSeedProducesTheKnownPublicKeyAndFingerprint]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.SSHKeyTests testKnownSeedProducesTheKnownPublicKeyAndFingerprint]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testPinnedKeyMatchesRegardlessOfTrailingComment]' started.
-Test Case '-[ServerOSTests.SSHKeyTests testPinnedKeyMatchesRegardlessOfTrailingComment]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.SSHKeyTests testPinnedKeyMatchesRegardlessOfTrailingComment]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testPublicKeyBlobMatchesTheFormatOpenSSHWrites]' started.
 Test Case '-[ServerOSTests.SSHKeyTests testPublicKeyBlobMatchesTheFormatOpenSSHWrites]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testSeedRoundTripsToTheSameKey]' started.
 Test Case '-[ServerOSTests.SSHKeyTests testSeedRoundTripsToTheSameKey]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testWireReaderRefusesToReadPastTheEnd]' started.
-Test Case '-[ServerOSTests.SSHKeyTests testWireReaderRefusesToReadPastTheEnd]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.SSHKeyTests testWireReaderRefusesToReadPastTheEnd]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testWireStringHandlesALengthOverATwoByteBoundary]' started.
-Test Case '-[ServerOSTests.SSHKeyTests testWireStringHandlesALengthOverATwoByteBoundary]' passed (0.000 seconds).
+Test Case '-[ServerOSTests.SSHKeyTests testWireStringHandlesALengthOverATwoByteBoundary]' passed (0.007 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testWireStringIsFourByteLengthThenBytes]' started.
 Test Case '-[ServerOSTests.SSHKeyTests testWireStringIsFourByteLengthThenBytes]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.SSHKeyTests testWrongSizedSeedIsRejectedWithAReadableError]' started.
 Test Case '-[ServerOSTests.SSHKeyTests testWrongSizedSeedIsRejectedWithAReadableError]' passed (0.000 seconds).
-Test Suite 'SSHKeyTests' passed at 2026-09-12 23:48:59.577.
-	 Executed 17 tests, with 0 failures (0 unexpected) in 0.013 (0.019) seconds
-Test Suite 'WireDecodingTests' started at 2026-09-12 23:48:59.580.
+Test Suite 'SSHKeyTests' passed at 2026-09-13 08:48:14.419.
+	 Executed 17 tests, with 0 failures (0 unexpected) in 0.020 (0.026) seconds
+Test Suite 'ServerLifecycleTests' started at 2026-09-13 08:48:14.419.
+Test Case '-[ServerOSTests.ServerLifecycleTests testAnUnreachableServerIsStillInTheStore]' started.
+Test Case '-[ServerOSTests.ServerLifecycleTests testAnUnreachableServerIsStillInTheStore]' passed (0.046 seconds).
+Test Case '-[ServerOSTests.ServerLifecycleTests testAnUnreachableServerReportsOfflineRatherThanUnknown]' started.
+Test Case '-[ServerOSTests.ServerLifecycleTests testAnUnreachableServerReportsOfflineRatherThanUnknown]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.ServerLifecycleTests testAServerThatWentQuietIsDegradedBeforeItIsOffline]' started.
+Test Case '-[ServerOSTests.ServerLifecycleTests testAServerThatWentQuietIsDegradedBeforeItIsOffline]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.ServerLifecycleTests testDemoServersAndRealServersCoexistWithoutContaminatingEachOther]' started.
+Test Case '-[ServerOSTests.ServerLifecycleTests testDemoServersAndRealServersCoexistWithoutContaminatingEachOther]' passed (0.015 seconds).
+Test Case '-[ServerOSTests.ServerLifecycleTests testReconnectingKeepsTheSameServerIdentity]' started.
+Test Case '-[ServerOSTests.ServerLifecycleTests testReconnectingKeepsTheSameServerIdentity]' passed (0.008 seconds).
+Test Case '-[ServerOSTests.ServerLifecycleTests testRemovingAServerTakesItsCredentialWithIt]' started.
+Test Case '-[ServerOSTests.ServerLifecycleTests testRemovingAServerTakesItsCredentialWithIt]' passed (0.024 seconds).
+Test Case '-[ServerOSTests.ServerLifecycleTests testRemovingAServerThatIsAlreadyGoneIsNotAnError]' started.
+Test Case '-[ServerOSTests.ServerLifecycleTests testRemovingAServerThatIsAlreadyGoneIsNotAnError]' passed (0.010 seconds).
+Test Case '-[ServerOSTests.ServerLifecycleTests testRemovingOneServerLeavesTheOthers]' started.
+Test Case '-[ServerOSTests.ServerLifecycleTests testRemovingOneServerLeavesTheOthers]' passed (0.008 seconds).
+Test Case '-[ServerOSTests.ServerLifecycleTests testUpdatingASeenServerDoesNotChangeItsIdentityOrDuplicateIt]' started.
+Test Case '-[ServerOSTests.ServerLifecycleTests testUpdatingASeenServerDoesNotChangeItsIdentityOrDuplicateIt]' passed (0.009 seconds).
+Test Suite 'ServerLifecycleTests' passed at 2026-09-13 08:48:14.541.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.120 (0.122) seconds
+Test Suite 'ServerPersistenceTests' started at 2026-09-13 08:48:14.541.
+Test Case '-[ServerOSTests.ServerPersistenceTests testAFailedListChangeAdmitsTheScreenMayBeWrong]' started.
+Test Case '-[ServerOSTests.ServerPersistenceTests testAFailedListChangeAdmitsTheScreenMayBeWrong]' passed (0.002 seconds).
+Test Case '-[ServerOSTests.ServerPersistenceTests testAFailedSaveSaysTheServerItselfIsFine]' started.
+Test Case '-[ServerOSTests.ServerPersistenceTests testAFailedSaveSaysTheServerItselfIsFine]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.ServerPersistenceTests testAKeychainEntitlementFailureIsNamedRatherThanShownAsANumber]' started.
+Test Case '-[ServerOSTests.ServerPersistenceTests testAKeychainEntitlementFailureIsNamedRatherThanShownAsANumber]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.ServerPersistenceTests testAnOrdinaryFailureDoesNotBlameCodeSigning]' started.
+Test Case '-[ServerOSTests.ServerPersistenceTests testAnOrdinaryFailureDoesNotBlameCodeSigning]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.ServerPersistenceTests testAServerIsStillThereAfterNavigatingAwayAndReloading]' started.
+Test Case '-[ServerOSTests.ServerPersistenceTests testAServerIsStillThereAfterNavigatingAwayAndReloading]' passed (0.008 seconds).
+Test Case '-[ServerOSTests.ServerPersistenceTests testAServerSurvivesTheAppBeingClosedAndReopened]' started.
+Test Case '-[ServerOSTests.ServerPersistenceTests testAServerSurvivesTheAppBeingClosedAndReopened]' passed (0.010 seconds).
+Test Case '-[ServerOSTests.ServerPersistenceTests testRemovingAServerRemovesItFromDiskToo]' started.
+Test Case '-[ServerOSTests.ServerPersistenceTests testRemovingAServerRemovesItFromDiskToo]' passed (0.009 seconds).
+Test Case '-[ServerOSTests.ServerPersistenceTests testSettingUpTheSameServerTwiceDoesNotDuplicateIt]' started.
+Test Case '-[ServerOSTests.ServerPersistenceTests testSettingUpTheSameServerTwiceDoesNotDuplicateIt]' passed (0.008 seconds).
+Test Case '-[ServerOSTests.ServerPersistenceTests testTheMetadataSetupCollectedIsSavedWithTheServer]' started.
+Test Case '-[ServerOSTests.ServerPersistenceTests testTheMetadataSetupCollectedIsSavedWithTheServer]' passed (0.007 seconds).
+Test Suite 'ServerPersistenceTests' passed at 2026-09-13 08:48:14.590.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.047 (0.049) seconds
+Test Suite 'WireDecodingTests' started at 2026-09-13 08:48:14.590.
 Test Case '-[ServerOSTests.WireDecodingTests testAbsentSubsystemDecodesAsACalmAnswer]' started.
 Test Case '-[ServerOSTests.WireDecodingTests testAbsentSubsystemDecodesAsACalmAnswer]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.WireDecodingTests testActivityDecodes]' started.
@@ -902,7 +1148,7 @@ Test Case '-[ServerOSTests.WireDecodingTests testCapabilitiesDecodes]' passed (0
 Test Case '-[ServerOSTests.WireDecodingTests testDatabaseInstancesDecode]' started.
 Test Case '-[ServerOSTests.WireDecodingTests testDatabaseInstancesDecode]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.WireDecodingTests testDeniedErrorDecodesAndBecomesReadable]' started.
-Test Case '-[ServerOSTests.WireDecodingTests testDeniedErrorDecodesAndBecomesReadable]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.WireDecodingTests testDeniedErrorDecodesAndBecomesReadable]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.WireDecodingTests testDockerContainersDecode]' started.
 Test Case '-[ServerOSTests.WireDecodingTests testDockerContainersDecode]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.WireDecodingTests testDockerImagesDecode]' started.
@@ -916,7 +1162,7 @@ Test Case '-[ServerOSTests.WireDecodingTests testDockerNetworksDecode]' passed (
 Test Case '-[ServerOSTests.WireDecodingTests testDockerVolumesDecode]' started.
 Test Case '-[ServerOSTests.WireDecodingTests testDockerVolumesDecode]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.WireDecodingTests testEveryFixtureIsAccountedFor]' started.
-Test Case '-[ServerOSTests.WireDecodingTests testEveryFixtureIsAccountedFor]' passed (0.026 seconds).
+Test Case '-[ServerOSTests.WireDecodingTests testEveryFixtureIsAccountedFor]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.WireDecodingTests testEveryFixtureIsValidJSON]' started.
 Test Case '-[ServerOSTests.WireDecodingTests testEveryFixtureIsValidJSON]' passed (0.003 seconds).
 Test Case '-[ServerOSTests.WireDecodingTests testFileListingDecodes]' started.
@@ -928,7 +1174,7 @@ Test Case '-[ServerOSTests.WireDecodingTests testFileStatDecodes]' passed (0.001
 Test Case '-[ServerOSTests.WireDecodingTests testGroupsDecode]' started.
 Test Case '-[ServerOSTests.WireDecodingTests testGroupsDecode]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.WireDecodingTests testHealthDecodes]' started.
-Test Case '-[ServerOSTests.WireDecodingTests testHealthDecodes]' passed (0.001 seconds).
+Test Case '-[ServerOSTests.WireDecodingTests testHealthDecodes]' passed (0.000 seconds).
 Test Case '-[ServerOSTests.WireDecodingTests testMetricsDecodes]' started.
 Test Case '-[ServerOSTests.WireDecodingTests testMetricsDecodes]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.WireDecodingTests testNotFoundErrorDecodesAndBecomesReadable]' started.
@@ -951,19 +1197,22 @@ Test Case '-[ServerOSTests.WireDecodingTests testSystemDecodes]' started.
 Test Case '-[ServerOSTests.WireDecodingTests testSystemDecodes]' passed (0.001 seconds).
 Test Case '-[ServerOSTests.WireDecodingTests testUsersDecode]' started.
 Test Case '-[ServerOSTests.WireDecodingTests testUsersDecode]' passed (0.001 seconds).
-Test Suite 'WireDecodingTests' passed at 2026-09-12 23:48:59.637.
-	 Executed 30 tests, with 0 failures (0 unexpected) in 0.049 (0.057) seconds
-Test Suite 'ServerOSTests.xctest' passed at 2026-09-12 23:48:59.638.
-	 Executed 202 tests, with 10 tests skipped and 0 failures (0 unexpected) in 0.193 (0.316) seconds
-Test Suite 'All tests' passed at 2026-09-12 23:48:59.638.
-	 Executed 202 tests, with 10 tests skipped and 0 failures (0 unexpected) in 0.193 (0.316) seconds
-2026-09-12 23:48:59.958 xcodebuild[30067:396959] [MT] IDETestOperationsObserverDebug: 5.190 elapsed -- Testing started completed.
-2026-09-12 23:48:59.958 xcodebuild[30067:396959] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
-2026-09-12 23:48:59.958 xcodebuild[30067:396959] [MT] IDETestOperationsObserverDebug: 5.190 sec, +5.190 sec -- end
+Test Suite 'WireDecodingTests' passed at 2026-09-13 08:48:14.641.
+	 Executed 30 tests, with 0 failures (0 unexpected) in 0.023 (0.051) seconds
+Test Suite 'ServerOSTests.xctest' failed at 2026-09-13 08:48:14.642.
+	 Executed 253 tests, with 1 failure (0 unexpected) in 7.825 (7.981) seconds
+Test Suite 'All tests' failed at 2026-09-13 08:48:14.642.
+	 Executed 253 tests, with 1 failure (0 unexpected) in 7.825 (7.982) seconds
+2026-09-13 08:48:22.597 xcodebuild[71802:800958] [MT] IDETestOperationsObserverDebug: 20.124 elapsed -- Testing started completed.
+2026-09-13 08:48:22.600 xcodebuild[71802:800958] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-13 08:48:22.600 xcodebuild[71802:800958] [MT] IDETestOperationsObserverDebug: 20.124 sec, +20.124 sec -- end
 
 Test session results, code coverage, and logs:
-	/Users/creator/Documents/Startups/NakaApp/.derived/Logs/Test/Test-ServerOS-2026.09.12_23-48-48-+0200.xcresult
+	/Users/creator/Documents/Startups/NakaApp/.derived/Logs/Test/Test-ServerOS-2026.09.13_08-47-57-+0200.xcresult
 
-** TEST SUCCEEDED **
+Failing tests:
+	DatabaseProvisionerTests.testEveryAdministratorQueryBecomesThePostgresUser()
+
+** TEST FAILED **
 
 Testing started

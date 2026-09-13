@@ -219,6 +219,20 @@ pub fn unavailable(subsystem: &str, reason: &str) -> Response {
     )
 }
 
+/// 503 for a subsystem that is running but refused the agent's credentials.
+///
+/// Deliberately not `unavailable`: the two produce different sentences on the
+/// user's screen and different actions. Absent means there is nothing to do;
+/// this means one role needs creating, and the message says which.
+pub fn unauthenticated(subsystem: &str, reason: &str) -> Response {
+    Response::error_detail(
+        Status::SERVICE_UNAVAILABLE,
+        "subsystem_unauthenticated",
+        format!("ServerOS can see {subsystem} on this server but couldn't sign in."),
+        reason,
+    )
+}
+
 /// 500 with the technical detail tucked behind `detail`.
 pub fn internal(message: impl Into<String>, detail: impl std::fmt::Display) -> Response {
     Response::error_detail(Status::INTERNAL, "internal_error", message, detail.to_string())

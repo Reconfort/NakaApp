@@ -910,8 +910,14 @@ public struct PostgresTable: Decodable, Sendable, Identifiable {
     public let indexSizeBytes: Int64?
     public let seqScans: Int64?
     public let indexScans: Int64?
-    public let lastVacuum: String?
-    public let lastAnalyze: String?
+    // Epoch seconds, as the agent's `extract(epoch FROM …)::bigint` produces
+    // and `int(row, …)` emits — a JSON number, not a string. These were
+    // `String?`, which decoded fine only as long as every value was null;
+    // the first table that had actually been vacuumed made the whole tab
+    // fail with "expected String but found number". Same shape as the
+    // query_start/state_change bug on the Connections tab.
+    public let lastVacuum: Int64?
+    public let lastAnalyze: Int64?
 
     public var id: String { "\(schema).\(name)" }
 
@@ -969,7 +975,11 @@ public struct PostgresRole: Decodable, Sendable, Identifiable {
     public let bypassesRLS: Bool?
     /// PostgreSQL reports "no limit" as -1; the UI shows "Unlimited".
     public let connectionLimit: Int?
-    public let validUntil: String?
+    /// Epoch seconds (a JSON number), for the same reason as `PostgresTable`'s
+    /// timestamps. A role with a password expiry would otherwise have crashed
+    /// the Roles tab; every role in the fixture had `valid_until: null`, so
+    /// nothing revealed it here either.
+    public let validUntil: Int64?
 
     public var id: String { name }
 

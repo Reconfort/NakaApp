@@ -142,6 +142,25 @@ impl PgError {
 
     /// A short, human sentence for the app's error surface. The technical
     /// detail stays available through `Display`/`Debug` behind "view details".
+    /// Whether PostgreSQL answered but would not let the agent in.
+    ///
+    /// The distinction matters to whoever is looking at the screen. "PostgreSQL
+    /// is not available on this server" is a fact about the machine and there
+    /// is nothing to do about it. "PostgreSQL is running and the agent cannot
+    /// sign in" is a fact about one role, fixed by one `CREATE ROLE`. Reporting
+    /// both as unavailable produced a screen that said ServerOS could see
+    /// PostgreSQL *and* that PostgreSQL was not available, in the same panel.
+    pub fn is_authentication_failure(&self) -> bool {
+        matches!(
+            self,
+            PgError::AuthFailed(_)
+                | PgError::PasswordRequired
+                | PgError::ScramFailed(_)
+                | PgError::UnsupportedAuth(_)
+                | PgError::ChannelBindingRequired
+        )
+    }
+
     pub fn user_message(&self) -> String {
         match self {
             PgError::Io(_) => "ServerOS could not reach PostgreSQL.".into(),

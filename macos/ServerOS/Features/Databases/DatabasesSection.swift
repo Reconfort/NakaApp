@@ -39,6 +39,10 @@ public struct DatabasesSection: View {
     private let session: ServerSession
     private let navigation: NavigationModel
 
+    /// Needed for the SSH connection this server was set up with — provisioning
+    /// a database account is done over SSH, not through the agent.
+    @Environment(AppModel.self) private var model
+
     @State private var overview: ScreenState<PostgresOverview> = .loading
     /// Everything the agent could find listening, whether or not it could log in.
     @State private var instances: [DatabaseInstance] = []
@@ -53,6 +57,14 @@ public struct DatabasesSection: View {
     @State private var showsQueryText = false
     @State private var isExplainingQueryText = false
     @State private var reloadNonce = 0
+
+    /// Provisioning: ServerOS creating its own read-only role rather than
+    /// telling the user to go and run psql.
+    @State private var isConfirmingProvision = false
+    @State private var isProvisioning = false
+    @State private var provisionStep: String?
+    @State private var provisionResult: String?
+    @State private var provisionFailure: ServerOSError?
 
     public init(session: ServerSession, navigation: NavigationModel) {
         self.session = session
@@ -78,6 +90,36 @@ public struct DatabasesSection: View {
         }
         // Not a destructive action, so not a destructive confirmation — but it
         // does reveal other people's data, so it is never a silent toggle.
+        .confirmationDialog(
+            "Let ServerOS create its own database account?",
+            isPresented: $isConfirmingProvision,
+            titleVisibility: .visible
+        ) {
+            Button("Create the Account") { Task { await provisionDatabaseAccess() } }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("ServerOS will connect to \(session.name) over SSH and create one PostgreSQL role named "
+                 + "\"serveros\", granted pg_monitor — PostgreSQL's own built-in role for monitoring. It can read "
+                 + "the catalogue and the statistics views. It cannot read the data in your tables, own anything, "
+                 + "or write. Nothing else on the server is touched.")
+        }
+        .alert("Database access is set up", isPresented: .constant(provisionResult != nil)) {
+            Button("Done") { provisionResult = nil; reloadNonce += 1 }
+        } message: {
+            Text(provisionResult ?? "")
+        }
+        .sheet(item: $provisionFailure) { failure in
+            VStack(spacing: Spacing.section) {
+                ErrorState(error: failure, retry: {
+                    provisionFailure = nil
+                    Task { await provisionDatabaseAccess() }
+                })
+                Button("Close") { provisionFailure = nil }
+                    .buttonStyle(.secondary)
+            }
+            .padding(Spacing.section)
+            .frame(width: 480)
+        }
         .confirmationDialog(
             "Show the SQL these connections are running?",
             isPresented: $isExplainingQueryText,
@@ -156,15 +198,22 @@ public struct DatabasesSection: View {
     private var summaryCards: some View {
         if let failure = authenticationFailure {
             // The realistic failure, and the one a generic error handles worst.
+            // The headline used to be appended here. The agent reported an
+            // authentication failure as `subsystem_unavailable`, so this panel
+            // said ServerOS could see PostgreSQL *and*, in the same sentence,
+            // that PostgreSQL was not available. The agent now distinguishes the
+            // two; this says the one thing, once.
             InlineBanner(
                 .warning,
-                "ServerOS can see PostgreSQL on \(session.name)\(instanceDescription), but the agent couldn't sign "
-                    + "in. It connects as the role named under \"postgres\" in /etc/serveros/agent.json — by default "
-                    + "serveros, over the socket in /var/run/postgresql. Create that role and grant it pg_monitor, "
-                    + "or point the agent at one that exists. (\(failure.headline))",
-                actionTitle: "Try Again",
-                action: { reloadNonce += 1 }
+                isProvisioning
+                    ? (provisionStep ?? "Setting up ServerOS's database account on \(session.name)…")
+                    : "ServerOS can see PostgreSQL on \(session.name)\(instanceDescription) but has no account to "
+                        + "sign in with. It can create a read-only one for itself — that needs nothing from you but "
+                        + "a moment's permission.",
+                actionTitle: isProvisioning ? nil : "Set Up Access",
+                action: { isConfirmingProvision = true }
             )
+            .accessibilityLabel("PostgreSQL sign-in failed: \(failure.headline)")
         } else {
             StatefulContent(overview, retry: { reloadNonce += 1 }) { value in
                 HStack(alignment: .top, spacing: Spacing.between) {
@@ -336,11 +385,27 @@ public struct DatabasesSection: View {
 
     @ViewBuilder
     private var tabContent: some View {
-        switch tab {
-        case .databases: databasesTable
-        case .tables: tablesTable
-        case .connections: connectionsTable
-        case .roles: rolesTable
+        if authenticationFailure != nil {
+            // Every one of these tables failed for the same reason, and the
+            // banner above has already said what it is and how to fix it.
+            // Repeating it here as a full-screen error said the same thing
+            // twice — and, while the agent reported a sign-in failure as
+            // "unavailable", the two messages contradicted each other on the
+            // same screen: ServerOS could see PostgreSQL, and PostgreSQL was
+            // not available.
+            EmptyState(
+                systemImage: "cylinder.split.1x2",
+                title: "Nothing to show until ServerOS can sign in",
+                message: "Databases, tables, connections and roles appear here as soon as the agent "
+                    + "can read this PostgreSQL server."
+            )
+        } else {
+            switch tab {
+            case .databases: databasesTable
+            case .tables: tablesTable
+            case .connections: connectionsTable
+            case .roles: rolesTable
+            }
         }
     }
 
@@ -777,6 +842,78 @@ public struct DatabasesSection: View {
         return " (port \(first.port))"
     }
 
+    /// Create ServerOS's own read-only PostgreSQL role, over the SSH
+    /// connection this server was set up with.
+    ///
+    /// Not through the agent: creating database roles is a privilege the agent
+    /// does not have and should not be given. This is a setup act of the same
+    /// kind as installing the agent, and it runs the same way.
+    private func provisionDatabaseAccess() async {
+        guard let tunnel = model.tunnel(for: session.id) else {
+            provisionFailure = .databaseProvisioningUnavailable(
+                reason: "ServerOS isn't connected to \(session.name) over SSH right now. Reconnect and try again."
+            )
+            return
+        }
+        guard let client = await tunnel.sshClient() else {
+            provisionFailure = .databaseProvisioningUnavailable(
+                reason: "The SSH connection to \(session.name) isn't open. Reconnect and try again."
+            )
+            return
+        }
+
+        isProvisioning = true
+        defer {
+            isProvisioning = false
+            provisionStep = nil
+        }
+
+        do {
+            // The agent has to understand `postgres.host` for any of this to
+            // take effect, and a server set up before that existed is running
+            // an agent that will quietly ignore it — which would produce
+            // exactly the failure this whole feature is fixing: everything
+            // reports success and the screen still says the credentials were
+            // rejected. So the binary is brought level first.
+            //
+            // Checked by checksum, so a server already running this build is
+            // left alone rather than needlessly restarted. Keeping agents
+            // current in general belongs in its own flow, not on the Databases
+            // screen; it lives here for now because this is the screen that
+            // cannot work without it.
+            provisionStep = "Checking the agent on \(session.name)…"
+            let bootstrap = AgentBootstrap(client: client) { _ in }
+            if try await bootstrap.upgradeAgentIfNeeded() != nil {
+                provisionStep = "Updated the agent. Setting up the database account…"
+            } else {
+                provisionStep = "Setting up ServerOS's database account on \(session.name)…"
+            }
+
+            let provisioner = DatabaseProvisioner(
+                client: client,
+                privileged: session.summary.sshUsername == "root" ? "" : "sudo -n "
+            )
+            let outcome = try await provisioner.provisionPostgres()
+            provisionResult = outcome.summary
+
+            // The agent was replaced and restarted underneath us, so the
+            // session is holding a view of a process that no longer exists —
+            // including the capability probe, which is what decides whether
+            // this screen is even offered. Reconnect rather than reload:
+            // `.onChange(of: session.phase.isReady)` bumps the reload once the
+            // new connection is up, so the data arrives when there is
+            // something to ask.
+            session.reconnect()
+        } catch let error as ServerOSError {
+            provisionFailure = error
+        } catch {
+            provisionFailure = .databaseProvisioningFailed(
+                step: "setting up database access",
+                detail: "\(error)"
+            )
+        }
+    }
+
     private func loadOverview() async {
         guard let api = session.api else {
             if overview.value == nil { overview = .loading }
@@ -979,17 +1116,13 @@ public struct DatabasesSection: View {
         return seq > index * 10
     }
 
-    /// The agent reports these timestamps as `extract(epoch FROM …)`, and the
-    /// wire model carries them as text — so a value may arrive as "1757600000"
-    /// or as something already formatted. Parse the epoch when we can and show
-    /// exactly what we were given when we cannot: inventing a date out of a
-    /// string we did not understand would be worse than showing the string.
-    private static func timeDescription(_ raw: String?, whenMissing: String = "Never") -> String {
-        guard let raw, !raw.isEmpty else { return whenMissing }
-        if let epoch = Int64(raw), epoch > 0 {
-            return Formatting.relative(unixSeconds: epoch)
-        }
-        return raw
+    /// The agent reports these timestamps as `extract(epoch FROM …)::bigint`,
+    /// i.e. epoch seconds as a number. `null` (never vacuumed, no expiry)
+    /// becomes `whenMissing`; `0` or negative is not a real time and is treated
+    /// the same.
+    private static func timeDescription(_ epoch: Int64?, whenMissing: String = "Never") -> String {
+        guard let epoch, epoch > 0 else { return whenMissing }
+        return Formatting.relative(unixSeconds: epoch)
     }
 
     /// How long a connection has been in its current state.
