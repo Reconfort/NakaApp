@@ -42,6 +42,14 @@ public struct ServerDetailScreen: View {
     /// must not be left thinking otherwise.
     @State private var removalFailure: ServerOSError?
 
+    /// Pushing the agent this copy of the app carries onto the server, which is
+    /// how a fix to the agent — a new capability in its service unit, a bug in
+    /// one of its routes — actually reaches a machine that already has one.
+    @State private var agentUpdate: AgentUpdateState = .idle
+    private enum AgentUpdateState: Equatable {
+        case idle, running(String), done(String), failed(ServerOSError)
+    }
+
     public init(session: ServerSession, section: ServerSection, navigation: NavigationModel) {
         self.session = session
         self.section = section
@@ -105,6 +113,94 @@ public struct ServerDetailScreen: View {
             }
             .padding(Spacing.section)
             .frame(width: 460)
+        }
+        .sheet(isPresented: agentUpdateSheet) { agentUpdateSheetBody }
+    }
+
+    // MARK: - Updating the agent
+
+    private var isUpdatingAgent: Bool {
+        if case .running = agentUpdate { return true }
+        return false
+    }
+
+    /// The sheet is up for the running, done and failed states — never idle.
+    private var agentUpdateSheet: Binding<Bool> {
+        Binding(
+            get: { agentUpdate != .idle },
+            set: { if !$0 { agentUpdate = .idle } }
+        )
+    }
+
+    @ViewBuilder
+    private var agentUpdateSheetBody: some View {
+        VStack(spacing: Spacing.section) {
+            switch agentUpdate {
+            case .idle:
+                EmptyView()
+            case .running(let step):
+                ProgressView().controlSize(.large)
+                Text(step)
+                    .font(Typography.body)
+                    .foregroundStyle(Palette.textSecondary)
+                    .multilineTextAlignment(.center)
+            case .done(let summary):
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 34))
+                    .foregroundStyle(Palette.healthy)
+                Text(summary)
+                    .font(Typography.body)
+                    .multilineTextAlignment(.center)
+                Button("Done") { agentUpdate = .idle }
+                    .buttonStyle(.primary)
+            case .failed(let error):
+                ErrorState(error: error) { Task { await updateAgent() } }
+                Button("Close") { agentUpdate = .idle }
+                    .buttonStyle(.secondary)
+            }
+        }
+        .padding(Spacing.section)
+        .frame(width: 460)
+    }
+
+    /// Reinstall the agent from the copy inside this app, over the SSH
+    /// connection this server was set up with, and restart it.
+    ///
+    /// Deliberately the full `upgradeAgent`, not the checksum-guarded
+    /// `upgradeAgentIfNeeded`: a change that lives only in the service unit —
+    /// the capability grant that lets the agent read a user's SSH keys, for one
+    /// — leaves the binary byte-for-byte identical, so a checksum comparison
+    /// would decide nothing needs doing and skip the very reinstall that
+    /// rewrites the unit. When a person picks "Update Agent", they mean it.
+    private func updateAgent() async {
+        guard let tunnel = model.tunnel(for: session.id) else {
+            agentUpdate = .failed(.sshNotConnected)
+            return
+        }
+        guard let client = await tunnel.sshClient() else {
+            agentUpdate = .failed(.sshNotConnected)
+            return
+        }
+
+        agentUpdate = .running("Updating the agent on \(session.name)…")
+        let bootstrap = AgentBootstrap(client: client) { step in
+            Task { @MainActor in
+                if case .running = agentUpdate { agentUpdate = .running(step.title) }
+            }
+        }
+
+        do {
+            let outcome = try await bootstrap.upgradeAgent()
+            agentUpdate = .done("\(session.name) is now running agent "
+                + "\(outcome.version ?? "the latest build"). ServerOS reconnected.")
+            session.reconnect()
+        } catch let error as ServerOSError {
+            agentUpdate = .failed(error)
+        } catch {
+            agentUpdate = .failed(.sshFailed(
+                "The agent on \(session.name) couldn't be updated.",
+                technical: "\(error)"
+            ))
         }
     }
 
@@ -170,6 +266,9 @@ public struct ServerDetailScreen: View {
             Button("Reconnect") { session.reconnect() }
             Button("Copy Hostname") { copyHostname() }
             Button("Open Terminal") { navigation.select(section: .terminal) }
+            Divider()
+            Button("Update Agent…") { Task { await updateAgent() } }
+                .disabled(isUpdatingAgent)
             Divider()
             Button("Remove from ServerOS…", role: .destructive) { isConfirmingRemoval = true }
         } label: {

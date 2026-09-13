@@ -113,25 +113,12 @@ public final class ServerSession {
         }
         guard let connection else { return }
 
-        phaseTask?.cancel()
-        phaseTask = Task { [weak self] in
-            guard let self else { return }
-            for await newPhase in await connection.phaseUpdates() {
-                await self.apply(phase: newPhase)
-            }
-        }
-
+        observePhases(of: connection)
         Task { await connection.connect() }
     }
 
     public func disconnect() {
-        streamTask?.cancel()
-        streamTask = nil
-        demoTask?.cancel()
-        demoTask = nil
-        api = nil
-        stream = nil
-        subscribedChannels = []
+        forgetLiveState()
         phase = .disconnected
         recomputeHealth()
 
@@ -140,10 +127,62 @@ public final class ServerSession {
         }
     }
 
+    /// Tear down and connect again — every "Reconnect" button in the app.
+    ///
+    /// This used to be `disconnect(); phase = .idle; connect()`, which put
+    /// `connection.disconnect()` and `connection.connect()` on two separate
+    /// tasks against the same actor. Actors don't run tasks in the order they
+    /// were made, and they are re-entrant at every `await`: `disconnect()`
+    /// would suspend on closing the stream, `connect()` would enter, see the
+    /// phase still `.ready`, and return having done nothing — then
+    /// `disconnect()` would finish and leave the server at `.disconnected`.
+    /// Permanently. Every Reconnect button in the app was this coin flip, and
+    /// the coin was weighted: it came up "Offline" nearly every time, and the
+    /// button meant to fix that ran the same race again.
+    ///
+    /// The connection has always had an ordered `reconnect()` of its own. This
+    /// now uses it, in one task, so teardown completes before the connect
+    /// begins.
     public func reconnect() {
-        disconnect()
+        forgetLiveState()
         phase = .idle
-        connect()
+        recomputeHealth()
+
+        if let demoClient {
+            startDemo(demoClient)
+            return
+        }
+        guard let connection else { return }
+
+        observePhases(of: connection)
+        Task { await connection.reconnect() }
+    }
+
+    /// Drop everything this session holds about a live connection. The
+    /// connection itself is torn down by the caller, in whichever order the
+    /// caller needs.
+    private func forgetLiveState() {
+        streamTask?.cancel()
+        streamTask = nil
+        demoTask?.cancel()
+        demoTask = nil
+        api = nil
+        stream = nil
+        subscribedChannels = []
+    }
+
+    /// Follow the connection's phase from now on. Replaces any earlier
+    /// observation: the connection finishes its previous stream when a new one
+    /// is asked for, so a stale task cannot apply a stale phase on top of a
+    /// fresh one.
+    private func observePhases(of connection: ServerConnection) {
+        phaseTask?.cancel()
+        phaseTask = Task { [weak self] in
+            guard let self else { return }
+            for await newPhase in await connection.phaseUpdates() {
+                await self.apply(phase: newPhase)
+            }
+        }
     }
 
     /// Ask the server for everything again, for ⌘R and pull-to-refresh.

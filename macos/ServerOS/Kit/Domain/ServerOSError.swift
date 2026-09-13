@@ -32,6 +32,28 @@ public struct ServerOSError: Error, Equatable, Sendable, Identifiable {
     /// Whether the app should try to re-authenticate and retry once, silently.
     public let needsFreshCredential: Bool
 
+    /// When this build of ServerOS was compiled, as `2026-09-12 23:08`.
+    ///
+    /// Shown under every technical-details disclosure because of how much time
+    /// went into debugging a fix that was already in the source but not in the
+    /// running app: `open Foo.app` on a running app brings it to the front
+    /// rather than relaunching it, so several rounds of "it still fails" were
+    /// screenshots of an older binary. A screenshot that names its own build
+    /// ends that conversation before it starts.
+    ///
+    /// It is deliberately *not* folded into `technical`: that field is what
+    /// actually went wrong, and a test asserts the agent's own message survives
+    /// it intact. Presentation context belongs to the view.
+    public static let buildStamp: String = {
+        let url = Bundle.main.executableURL
+        let date = (try? url?.resourceValues(forKeys: [.contentModificationDateKey]))?
+            .contentModificationDate
+        guard let date else { return "build unknown" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        return "build \(formatter.string(from: date))"
+    }()
+
     public init(
         code: String,
         headline: String,
@@ -142,6 +164,20 @@ extension ServerOSError {
                 causes: [],
                 technical: detail,
                 isRetryable: false
+            )
+
+        case "subsystem_unauthenticated":
+            // The subsystem is there and running; one credential is wrong. The
+            // agent's `detail` already carries the specific remedy, so it goes
+            // in `causes` where the user reads it, not behind a disclosure.
+            // Retryable, because the fix is applied on the server and then this
+            // very button is the way back.
+            return ServerOSError(
+                code: code,
+                headline: message,
+                causes: detail.map { [$0] } ?? [],
+                technical: nil,
+                isRetryable: true
             )
 
         case "not_found":
@@ -428,6 +464,36 @@ extension ServerOSError {
             headline: reason,
             causes: causes.isEmpty ? ["This happened while: \(step)"] : causes,
             technical: technical,
+            isRetryable: true
+        )
+    }
+
+    /// ServerOS cannot create a database account on this server.
+    public static func databaseProvisioningUnavailable(reason: String) -> ServerOSError {
+        ServerOSError(
+            code: "db_provisioning_unavailable",
+            headline: "ServerOS can't set up database access on this server.",
+            causes: [reason],
+            technical: nil,
+            isRetryable: false
+        )
+    }
+
+    /// Provisioning started and stopped part-way.
+    ///
+    /// Names the step, because "it failed" leaves the operator guessing whether
+    /// a role now exists, whether it has a password, and whether the agent is
+    /// running. Provisioning is idempotent, so the honest advice is to try
+    /// again rather than to go and inspect.
+    public static func databaseProvisioningFailed(step: String, detail: String) -> ServerOSError {
+        ServerOSError(
+            code: "db_provisioning_failed",
+            headline: "ServerOS couldn't finish setting up database access.",
+            causes: [
+                "It stopped while \(step).",
+                "Nothing was left half-applied that trying again won't finish.",
+            ],
+            technical: detail,
             isRetryable: true
         )
     }

@@ -259,6 +259,92 @@ public actor AgentBootstrap {
 
     // MARK: Run
 
+    /// Replace the agent on a server that already has one, and restart it.
+    ///
+    /// Everything `run` does except the parts that only make sense once:
+    /// no host-key confirmation, no key installation, no enrolment. The
+    /// server keeps its identity and its shared secret, so the Mac's stored
+    /// credential stays valid across the upgrade.
+    ///
+    /// Needed because the agent is installed from a copy carried inside the
+    /// app, which means a fix to the agent reaches a server only when the app
+    /// puts it there. Without this, a server set up last month is frozen on
+    /// whatever the agent was that day.
+    public func upgradeAgent() async throws -> InstallOutcome {
+        progress(.testingConnection)
+        try await client.connect()
+
+        progress(.checkingRequirements)
+        let requirements = try await checkRequirements()
+
+        progress(.installingAgent)
+        let outcome = try await installAgent(requirements: requirements)
+
+        progress(.startingAgent)
+        try await startAgent(
+            requirements: requirements,
+            hasSystemd: outcome.initSystem == "systemd"
+        )
+
+        // Wait for it to *answer*, not merely to have been started. The first
+        // version of this returned here, and the app reconnected into the gap
+        // between "systemd forked the process" and "the process bound its
+        // socket" — which reaches the user as "ServerOS couldn't reach the
+        // agent", moments after an upgrade that actually worked.
+        progress(.verifying)
+        try await waitUntilServing(requirements: requirements)
+
+        progress(.done)
+        return outcome
+    }
+
+    /// Upgrade only if the server isn't already running this exact binary.
+    ///
+    /// Compares checksums rather than version strings. A version number is a
+    /// promise a developer has to remember to keep; a SHA-256 is what is
+    /// actually on the disk. Two builds of the same version differ here, which
+    /// is precisely the case that matters — an agent fixed between releases
+    /// reaches a server only when the app notices the difference.
+    ///
+    /// Returns nil when nothing needed doing, so the caller can tell "already
+    /// current" from "upgraded" without guessing.
+    @discardableResult
+    public func upgradeAgentIfNeeded() async throws -> InstallOutcome? {
+        if try await installedAgentIsCurrent() { return nil }
+        return try await upgradeAgent()
+    }
+
+    /// Whether the agent on the server is byte-for-byte the one this copy of
+    /// ServerOS carries.
+    public func installedAgentIsCurrent() async throws -> Bool {
+        try await client.connect()
+
+        // Only the bundled source can be compared: `.download` means the
+        // binary isn't here to hash, and `.file` is a developer pointing at a
+        // build on purpose. Neither should be turned into a surprise upgrade.
+        guard case .bundled = options.binary else { return true }
+
+        let requirements = try await checkRequirements()
+        guard let localURL = AgentBinary.bundled(for: requirements.architecture),
+              let data = try? Data(contentsOf: localURL) else {
+            return true
+        }
+        let expected = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+
+        let remote = try await client.run(
+            "sha256sum \(Shell.quote(Self.agentBinaryPath)) 2>/dev/null | cut -d' ' -f1",
+            timeout: 60
+        )
+        let actual = remote.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // No answer means no sha256sum, no binary, or no permission to look.
+        // Reinstalling is the safe reading of "I can't tell": it is idempotent,
+        // and the alternative is leaving a server on an agent that may be the
+        // reason the user is here.
+        guard !actual.isEmpty else { return false }
+        return actual == expected
+    }
+
     public func run(installKey: ServerOSKeyPair?) async throws -> BootstrapResult {
         var warnings: [String] = []
 
@@ -473,10 +559,12 @@ public actor AgentBootstrap {
 
     // MARK: Step 4 — the agent
 
-    struct InstallOutcome: Sendable {
-        let version: String?
-        let architecture: String?
-        let initSystem: String?
+    /// Public because `upgradeAgent` returns it, and a public method cannot
+    /// hand back a type the rest of the module is not allowed to name.
+    public struct InstallOutcome: Sendable {
+        public let version: String?
+        public let architecture: String?
+        public let initSystem: String?
     }
 
     func installAgent(requirements: Requirements) async throws -> InstallOutcome {
@@ -837,57 +925,95 @@ public actor AgentBootstrap {
         }
     }
 
+    // MARK: Readiness
+
+    /// A shell script that waits until the agent answers its own health check.
+    ///
+    /// `systemctl is-active` says "active" the instant the process is forked.
+    /// Between that and the socket being bound there is a window — small on an
+    /// idle box, not small on a busy one — and anything that connects during it
+    /// gets `connection refused`. Every restart in this app used to be followed
+    /// immediately by an attempt to talk to the agent, so that window was
+    /// reachable by users, and it read as "the agent is down" rather than "wait
+    /// half a second".
+    ///
+    /// `serveros-agent status` is the right probe because it is the agent's own
+    /// binary asking the agent over its Unix socket, exiting 0 only on a real
+    /// `200` from `/v1/health`. Nothing extra has to be installed, and the loop
+    /// runs on the server rather than as a dozen SSH round-trips.
+    static func waitUntilServingScript(privileged: String, attempts: Int = 20) -> String {
+        """
+        i=0
+        while [ $i -lt \(attempts) ]; do
+            if \(privileged)\(agentBinaryPath) status >/dev/null 2>&1; then
+                echo "serving=yes"
+                exit 0
+            fi
+            i=$((i+1))
+            sleep 1
+        done
+        echo "serving=no"
+        \(privileged)journalctl -u \(serviceName) -n 20 --no-pager 2>/dev/null | tail -n 8
+        exit 93
+        """
+    }
+
+    /// Block until the agent is answering, or fail with what the journal said.
+    func waitUntilServing(requirements: Requirements) async throws {
+        let script = Self.waitUntilServingScript(privileged: requirements.privileged)
+        let result = try await client.run(script, timeout: 120)
+        guard result.succeeded, result.stdout.contains("serving=yes") else {
+            throw ServerOSError.setupFailed(
+                step: BootstrapStep.verifying.title,
+                reason: "The agent started but never answered.",
+                causes: [
+                    "It may be failing on startup and being restarted in a loop",
+                    "Its configuration may be invalid — the log below usually says so",
+                ],
+                technical: Self.lastLines(result.stdout + result.stderr, count: 12)
+            )
+        }
+    }
+
     // MARK: Step 7 — local verification
 
     /// `nil` when the agent is running, a warning when it is starting but has
     /// not finished, and a thrown error when it is definitely not running.
     func verifyRunning(requirements: Requirements, hasSystemd: Bool) async throws -> String? {
-        let useSystemd = hasSystemd || requirements.hasSystemd
-        let command = useSystemd
-            ? "\(requirements.privileged)systemctl is-active \(Self.serviceName) 2>&1 || true"
-            : "\(requirements.privileged)\(Self.agentBinaryPath) status 2>&1 || true"
-
-        // The agent takes a moment to bind its socket; asking three times over
-        // a second and a half is kinder than failing setup over a race.
-        var lastText = ""
-        for attempt in 0..<3 {
-            if attempt > 0 {
-                try? await Task.sleep(nanoseconds: 500_000_000)
-            }
-            let result = try await client.run(command, timeout: 30)
-            let text = result.trimmedStdout.lowercased()
-            lastText = text
-
-            if useSystemd {
-                // `is-active` prints exactly one word: active, activating,
-                // inactive, failed. "inactive" contains "active", so prefix
-                // matching is the only safe test.
-                if text.hasPrefix("active") { return nil }
-            } else if result.succeeded, !text.isEmpty,
-                      !text.contains("not running"), !text.contains("error") {
-                return nil
-            }
-        }
-
-        // Still starting is not the same as failed — an agent on a busy server
-        // can take longer than a second and a half, and the caller is about to
-        // try to reach it anyway.
-        if lastText.hasPrefix("activating") {
-            return "The agent was still starting when setup finished. If this server doesn't connect, try Reconnect in a moment."
-        }
-
-        let logs = try? await client.run(
-            "\(requirements.privileged)journalctl -u \(Self.serviceName) -n 30 --no-pager 2>&1 || true",
-            timeout: 30
+        // Ask whether it is *answering*, not whether systemd started it. This
+        // used to check `is-active` three times over a second and a half, which
+        // is both the wrong question and not long enough: "active" is true from
+        // the moment the process is forked, and a busy server takes longer than
+        // that to bind a socket. `serveros-agent status` works on every init
+        // system, because it goes to the agent's own Unix socket.
+        let probe = try await client.run(
+            Self.waitUntilServingScript(privileged: requirements.privileged),
+            timeout: 120
         )
+        if probe.succeeded, probe.stdout.contains("serving=yes") { return nil }
+
+        // Not answering yet. "Still coming up" is not the same as "failed", and
+        // the caller is about to try the tunnel regardless, so a warning serves
+        // the user better than refusing a setup that is about to work.
+        if hasSystemd || requirements.hasSystemd {
+            let state = try await client.run(
+                "\(requirements.privileged)systemctl is-active \(Self.serviceName) 2>&1 || true",
+                timeout: 30
+            )
+            if state.trimmedStdout.lowercased().hasPrefix("activating") {
+                return "The agent was still starting when setup finished. If this server doesn't connect, try Reconnect in a moment."
+            }
+        }
+
         throw ServerOSError.setupFailed(
             step: BootstrapStep.verifying.title,
-            reason: "The agent was installed but isn't running.",
+            reason: "The agent was installed but isn't answering.",
             causes: [
                 "It may have failed on startup — the log below usually says why",
+                "Its configuration may be invalid",
                 "The server may be out of disk space",
             ],
-            technical: Self.lastLines(logs?.stdout ?? "", count: 30)
+            technical: Self.lastLines(probe.stdout + probe.stderr, count: 20)
         )
     }
 

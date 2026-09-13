@@ -562,6 +562,13 @@ final class WireDecodingTests: XCTestCase {
         XCTAssertEqual(checkpoint.name, "pg_checkpoint")
         XCTAssertEqual(checkpoint.canLogin, false)
         XCTAssertEqual(checkpoint.privileges, ["Cannot log in"])
+
+        // A role WITH an expiry. `valid_until` arrives as epoch seconds — a
+        // number — and decoding it as a String is exactly the bug that took
+        // down the Roles tab on the real server. The fixture carries a real
+        // value here so this can never silently regress to String?.
+        let withExpiry = try XCTUnwrap(page.items.first { $0.name == "serveros" })
+        XCTAssertEqual(withExpiry.validUntil, 1_789_200_000)
     }
 
     // MARK: - Files

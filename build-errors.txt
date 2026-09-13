@@ -1,52 +1,40 @@
-# 2026-09-12 23:48:46  —  build.log
+# 2026-09-13 08:47:56  —  build.log
 
 /Users/creator/Documents/Startups/NakaApp/macos/ServerOS.xcodeproj: warning: The Copy Bundle Resources build phase contains this target's Info.plist file '/Users/creator/Documents/Startups/NakaApp/macos/ServerOS/Resources/Info.plist'. (in target 'ServerOS' from project 'ServerOS')
-/Users/creator/Documents/Startups/NakaApp/macos/ServerOS/App/ServerSession.swift:77:5: warning: 'nonisolated(unsafe)' has no effect on property 'streamTask', consider using 'nonisolated'
-/Users/creator/Documents/Startups/NakaApp/macos/ServerOS/App/ServerSession.swift:78:5: warning: 'nonisolated(unsafe)' has no effect on property 'phaseTask', consider using 'nonisolated'
-/Users/creator/Documents/Startups/NakaApp/macos/ServerOS/App/ServerSession.swift:79:5: warning: 'nonisolated(unsafe)' has no effect on property 'demoTask', consider using 'nonisolated'
-2026-09-12 23:48:46.617 appintentsmetadataprocessor[30032:396721] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
 
 --- package resolution ---
 
 --- signing / destination ---
 
 --- test results ---
-2026-09-12 23:48:57.623075+0200 ServerOS[30174:397840] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.623871+0200 ServerOS[30174:397842] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.623914+0200 ServerOS[30174:397842] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.624494+0200 ServerOS[30174:397849] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.624817+0200 ServerOS[30174:397842] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.625181+0200 ServerOS[30174:397841] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626125+0200 ServerOS[30174:397841] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626130+0200 ServerOS[30174:397842] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626138+0200 ServerOS[30174:397849] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.625732+0200 ServerOS[30174:397850] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626706+0200 ServerOS[30174:397850] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626276+0200 ServerOS[30174:397851] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626590+0200 ServerOS[30174:397840] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626872+0200 ServerOS[30174:397840] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-2026-09-12 23:48:57.626740+0200 ServerOS[30174:397851] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
-Test Suite 'AgentBinaryTests' passed at 2026-09-12 23:48:59.334.
-	 Executed 9 tests, with 0 failures (0 unexpected) in 0.006 (0.011) seconds
-Test Suite 'AgentTokenTests' passed at 2026-09-12 23:48:59.396.
-	 Executed 21 tests, with 0 failures (0 unexpected) in 0.022 (0.062) seconds
-Test Suite 'BootstrapStepTests' passed at 2026-09-12 23:48:59.410.
-	 Executed 13 tests, with 0 failures (0 unexpected) in 0.011 (0.013) seconds
-Test Suite 'EnrollmentBundleTests' passed at 2026-09-12 23:48:59.421.
-	 Executed 9 tests, with 0 failures (0 unexpected) in 0.007 (0.011) seconds
-Test Suite 'FormattingTests' passed at 2026-09-12 23:48:59.454.
-	 Executed 28 tests, with 0 failures (0 unexpected) in 0.023 (0.033) seconds
-Test Suite 'HealthEvaluatorTests' passed at 2026-09-12 23:48:59.518.
-	 Executed 51 tests, with 0 failures (0 unexpected) in 0.030 (0.064) seconds
-Test Suite 'KeychainTests' passed at 2026-09-12 23:48:59.547.
-	 Executed 12 tests, with 10 tests skipped and 0 failures (0 unexpected) in 0.024 (0.029) seconds
-Test Suite 'OpenSSHKeyParserTests' passed at 2026-09-12 23:48:59.558.
-	 Executed 12 tests, with 0 failures (0 unexpected) in 0.008 (0.011) seconds
-Test Suite 'SSHKeyTests' passed at 2026-09-12 23:48:59.577.
-	 Executed 17 tests, with 0 failures (0 unexpected) in 0.013 (0.019) seconds
-Test Suite 'WireDecodingTests' passed at 2026-09-12 23:48:59.637.
-	 Executed 30 tests, with 0 failures (0 unexpected) in 0.049 (0.057) seconds
-Test Suite 'ServerOSTests.xctest' passed at 2026-09-12 23:48:59.638.
-	 Executed 202 tests, with 10 tests skipped and 0 failures (0 unexpected) in 0.193 (0.316) seconds
-Test Suite 'All tests' passed at 2026-09-12 23:48:59.638.
-	 Executed 202 tests, with 10 tests skipped and 0 failures (0 unexpected) in 0.193 (0.316) seconds
+Test Suite 'AgentBinaryTests' passed at 2026-09-13 08:48:06.673.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.007 (0.012) seconds
+Test Suite 'AgentTokenTests' passed at 2026-09-13 08:48:06.730.
+	 Executed 21 tests, with 0 failures (0 unexpected) in 0.053 (0.056) seconds
+Test Suite 'BootstrapStepTests' passed at 2026-09-13 08:48:06.749.
+	 Executed 17 tests, with 0 failures (0 unexpected) in 0.013 (0.018) seconds
+/Users/creator/Documents/Startups/NakaApp/macos/ServerOSTests/DatabaseProvisionerTests.swift:87: error: -[ServerOSTests.DatabaseProvisionerTests testEveryAdministratorQueryBecomesThePostgresUser] : XCTAssertEqual failed: ("6") is not equal to ("7") - every psql call has to run as postgres, not as whoever we are
+Test Suite 'DatabaseProvisionerTests' failed at 2026-09-13 08:48:13.912.
+	 Executed 28 tests, with 1 failure (0 unexpected) in 7.109 (7.163) seconds
+Test Suite 'EnrollmentBundleTests' passed at 2026-09-13 08:48:13.928.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.010 (0.015) seconds
+Test Suite 'FormattingTests' passed at 2026-09-13 08:48:13.963.
+	 Executed 28 tests, with 0 failures (0 unexpected) in 0.022 (0.036) seconds
+Test Suite 'HealthEvaluatorTests' passed at 2026-09-13 08:48:14.034.
+	 Executed 51 tests, with 0 failures (0 unexpected) in 0.048 (0.071) seconds
+Test Suite 'KeychainTests' passed at 2026-09-13 08:48:14.369.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.331 (0.334) seconds
+Test Suite 'OpenSSHKeyParserTests' passed at 2026-09-13 08:48:14.393.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.021 (0.023) seconds
+Test Suite 'SSHKeyTests' passed at 2026-09-13 08:48:14.419.
+	 Executed 17 tests, with 0 failures (0 unexpected) in 0.020 (0.026) seconds
+Test Suite 'ServerLifecycleTests' passed at 2026-09-13 08:48:14.541.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.120 (0.122) seconds
+Test Suite 'ServerPersistenceTests' passed at 2026-09-13 08:48:14.590.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.047 (0.049) seconds
+Test Suite 'WireDecodingTests' passed at 2026-09-13 08:48:14.641.
+	 Executed 30 tests, with 0 failures (0 unexpected) in 0.023 (0.051) seconds
+Test Suite 'ServerOSTests.xctest' failed at 2026-09-13 08:48:14.642.
+	 Executed 253 tests, with 1 failure (0 unexpected) in 7.825 (7.981) seconds
+Test Suite 'All tests' failed at 2026-09-13 08:48:14.642.
+	 Executed 253 tests, with 1 failure (0 unexpected) in 7.825 (7.982) seconds

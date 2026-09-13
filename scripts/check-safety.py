@@ -402,13 +402,93 @@ def check_binds_are_loopback(verbose: bool) -> list[str]:
 
 
 
+# A shell command assembled as `\(prefix)-u postgres psql …`.
+#
+# Correct when `prefix` is "sudo -n ", and a command called `-u` when the prefix
+# is empty — which is what it is on every server reached as root. It failed
+# silently for six commands, and ServerOS reported that PostgreSQL "may be
+# stopped" about a cluster that was up. The prefix must be followed by a
+# command, never by an option.
+# Only where the interpolation sits in *command position*: at the start of a
+# line or a string, or straight after `if`, `then`, `|`, `;`, `&&` or `$(`.
+# `psql -h \(host) -p 5432` is fine — that interpolation is an argument, and
+# something already named the command.
+INTERPOLATED_OPTION = re.compile(
+    r"""(?:^|["`;|&(]|\bif\s|\bthen\s|\$\()\s*\\\([A-Za-z_][A-Za-z0-9_.()]*\)-{1,2}[A-Za-z]""",
+    re.MULTILINE,
+)
+
+
+def check_no_interpolated_option(verbose: bool) -> list[str]:
+    problems: list[str] = []
+    scanned = 0
+    for path in sorted((REPO / "macos" / "ServerOS" / "Kit" / "SSH").rglob("*.swift")):
+        raw = path.read_text(encoding="utf-8")
+        text = strip_comments(raw, "swift")
+        scanned += 1
+        for m in INTERPOLATED_OPTION.finditer(text):
+            line_no = text.count("\n", 0, m.start()) + 1
+            lines = raw.splitlines()
+            line = lines[line_no - 1] if line_no <= len(lines) else ""
+            problems.append(
+                f"{path.relative_to(REPO)}:{line_no}: shell command starts with an option, "
+                f"not a command, when the interpolation is empty\n"
+                f"        {line.strip()[:110]}"
+            )
+    if verbose:
+        print(f"  {scanned} SSH file(s) scanned for commands built from an empty prefix")
+    return problems
+
+
+def check_agent_can_read_files(verbose: bool) -> list[str]:
+    """The base agent service unit must let the agent read files it does not own.
+
+    The agent runs as root but the hardened unit strips its capabilities, so
+    plain DAC applies. With an EMPTY CapabilityBoundingSet the agent cannot read
+    a user's 0600 ~/.ssh/authorized_keys or a config in someone else's home, and
+    every read feature (Users keys, the Files browser) fails with EACCES on
+    exactly the files a management tool exists to look at. CAP_DAC_READ_SEARCH
+    is the read-only bypass that fixes it. This guards against the base unit
+    silently regressing to no capabilities.
+    """
+    installer = REPO / "macos" / "ServerOS" / "Kit" / "SSH" / "Resources" / "install-agent.sh"
+    if not installer.exists():
+        return [f"{installer}: not found"]
+    text = installer.read_text(encoding="utf-8")
+
+    # The base unit lives in `install_systemd()`. Read that function's body only,
+    # so the manage drop-in (which sets its own caps) is not what satisfies this.
+    m = re.search(r"install_systemd\(\)\s*\{(.*?)\n\}", text, re.S)
+    body = m.group(1) if m else text
+
+    # The unit is a heredoc; the base [Service] section's CapabilityBoundingSet
+    # must name CAP_DAC_READ_SEARCH (or the broader CAP_DAC_OVERRIDE).
+    base_caps = re.findall(r"^CapabilityBoundingSet=(.*)$", body, re.M)
+    # The first CapabilityBoundingSet in the base heredoc is the operative one.
+    if not base_caps:
+        return ["install-agent.sh: the base unit sets no CapabilityBoundingSet at all"]
+    first = base_caps[0].strip()
+    if "CAP_DAC_READ_SEARCH" in first or "CAP_DAC_OVERRIDE" in first:
+        if verbose:
+            print(f"  base unit CapabilityBoundingSet = {first!r}")
+        return []
+    return [
+        "install-agent.sh: the base agent unit's CapabilityBoundingSet is "
+        f"{first!r} — with no read capability the agent (running as root but "
+        "with no caps) cannot read files it does not own, and Users keys / "
+        "Files reads of protected files fail with Permission denied."
+    ]
+
+
 CHECKS = [
     ("Secrets are never passed to a log call", check_secret_logging),
+    ("No shell command is built as prefix + option", check_no_interpolated_option),
     ("No write the user waits on is silently discarded", check_no_swallowed_writes),
     ("The shipping app has no print/dump/NSLog", check_no_app_prints),
     ("Demo data is unreachable from the real path", check_demo_isolation),
     ("No SwiftData model stores a credential", check_no_persisted_credential),
     ("Every listening socket is loopback-only", check_binds_are_loopback),
+    ("The agent can read files it does not own", check_agent_can_read_files),
 ]
 
 

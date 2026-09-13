@@ -25,7 +25,7 @@ Xcode, pick a team under Signing & Capabilities, and ⌘U runs them for real.
 |---|---|---|
 | **`xcodebuild build`** | **macOS, Xcode, arm64** | **BUILD SUCCEEDED** |
 | **`xcodebuild test`** | **macOS, Xcode, arm64** | **193 tests, 0 failures, 10 skipped** |
-| `cargo test --workspace` (Rust agent) | Linux x86-64, real kernel | **1,081 passed, 0 failed** |
+| `cargo test --workspace` (Rust agent) | Linux x86-64, real kernel | **1,085 passed, 0 failed** |
 | — against a live Docker daemon | Docker 29.4.3, API 1.43 | list / inspect / restart / stop / logs / images / volumes / networks |
 | — against a live PostgreSQL | PostgreSQL 16.13 | SCRAM-SHA-256, MD5 and trust auth all exercised |
 | — against a live D-Bus | systemd unavailable in this container; D-Bus client covered by its own suite | service routes report `services: false` rather than pretending |
@@ -34,8 +34,9 @@ Xcode, pick a team under Signing & Capabilities, and ⌘U runs them for real.
 | **Full MVP workflow** (`scripts/mvp-workflow.py`) | live agent over HTTP | **32 passed, 0 failed** |
 | `scripts/check-swift.py` | static | no duplicate declarations, balanced delimiters, all 20 screen contracts present |
 | `scripts/check-members.py` | static | every design-system and model member reference resolves (62 files, 20 types) |
+| `scripts/check-access.py` | static, 368 types | no `public` declaration exposes an internal type |
 | `scripts/check-wire-contract.py` | static | every field the agent emits is named by a Swift model |
-| `scripts/check-safety.py` | static, 202 files | no secret in any log call; no `print`/`dump` in the app at all; demo data unreachable from the real path; no credential on a SwiftData model |
+| `scripts/check-safety.py` | static, 202 files | no secret in any log call; no `print`/`dump` in the app at all; demo data unreachable from the real path; no credential on a SwiftData model; no shell command built as prefix-plus-option; every listening socket on loopback |
 | `scripts/embed-install-script.py --check` | static | embedded installer byte-identical to `install-agent.sh` |
 | `scripts/build-macos.sh` | stubbed `xcodebuild` | success path, failure path, test phase and rebuild trigger all exercised |
 
@@ -85,14 +86,63 @@ that gap: it matches each fixture to the model whose `CodingKeys` cover it and
 compares every row's JSON value type against the declared Swift type. It found
 `state_change` too, which the test run had not yet reached.
 
+## What the first real server found
+
+A live Ubuntu 24.04 box found things no amount of local testing would have.
+Each is recorded here because each one changed a design, not a line.
+
+1. **`dl.serveros.app` did not exist.** The installer downloaded the agent from
+   a domain that was a placeholder. Setup failed at `Could not resolve host`.
+   The app now carries the Linux binary inside its own bundle and pushes it over
+   the SSH connection it already holds — no CDN, no `curl`, no DNS.
+2. **48 KiB of base64 in an SSH exec request.** An exec request is one packet
+   with a negotiated ceiling; 37 oversized channels plus a reflexive EOF killed
+   the whole connection with `Sent EOF out of sequence`. Payloads go on stdin
+   now, in one channel, with EOF sent exactly once.
+3. **A server that set up successfully and then vanished.** `try?` around the
+   save swallowed a Keychain error (`errSecMissingEntitlement`, from a
+   `keychain-access-groups` entitlement a locally-signed build cannot use). The
+   entitlement is gone, the Keychain falls back when it must, and five more
+   swallowed writes found by the same search are now handled.
+4. **`bind(): Operation not permitted`.** The SSH tunnel binds a loopback
+   listener, which the App Sandbox forbids without `network.server`. The
+   entitlements file had a comment asserting ServerOS never listens. It was
+   wrong about its own design.
+5. **PostgreSQL rejected credentials that were correct.** The agent runs as
+   root and connected over the Unix socket, where Debian and Ubuntu ship
+   `local all all peer` — peer authentication matches the *OS user* against the
+   role name, so no password could ever have worked. The agent now takes
+   `postgres.host` and provisioning points it at loopback TCP. Related: setting
+   that up reported success without checking, so it now signs in as the new role
+   before the agent is told to depend on it.
+6. **A command that was never actually run.** Provisioning built its psql calls
+   as `\(privileged)-u postgres psql …`. That is correct when `privileged` is
+   `"sudo -n "` and, on a server reached as **root**, where `privileged` is the
+   empty string, it hands the shell `-u postgres psql …` — a command named
+   `-u`, which does not exist. Six commands failed this way, `2>/dev/null`
+   swallowed the reason, and the app reported that PostgreSQL "may be stopped"
+   about a cluster that was up and answering. Two lessons, both now enforced:
+   *how does this account become root* and *how does anything become postgres*
+   are different questions (`su -s /bin/sh postgres -c` answers the second), and
+   a diagnostic thrown away is a diagnosis invented. `check-safety.py` now
+   rejects any shell command assembled as prefix-plus-option.
+7. **Two concurrent saves could corrupt a file.** Found by the agent's own test
+   suite while fixing (5), not by a user. `atomic_write` used one fixed temp
+   name and deleted a "stale" temp before retrying — which, with two writers, is
+   one writer unlinking the other's file mid-write and then renaming its
+   half-finished contents into place. Temp names are unique per write now.
+
 ## Still unverified
 
 * **Demo mode as an interactive experience** — the app launches, but nobody has
   clicked through restarting a container and watching it settle.
-* **The Mac ↔ agent path against a real Linux server.** The agent side of that
-  path is covered by `mvp-workflow.py` (32 checks, live agent); what is untested
-  is the SSH port-forward and enrolment from the app itself.
+* **Overview, Docker, Logs and Services against a real server.** Connect,
+  enrol, tunnel, header and persistence are verified end-to-end on a live
+  Ubuntu 24.04 host; these four screens have not yet met one.
 * **`KeychainTests` under real signing** — see the note above.
+* **arm64 Linux servers.** Only the x86-64 agent is bundled. Cross-compiling
+  needs one `cargo build --release` on an arm64 Linux machine; every network
+  route to a toolchain is blocked from here.
 
 `build.command` builds, runs the tests, then waits; while it waits, creating a
 `.build-request` file next to it starts another build, so a compile-and-fix loop

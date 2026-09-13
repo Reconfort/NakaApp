@@ -377,25 +377,17 @@ fn atomic_write(
         .file_name()
         .map(|n| n.to_string_lossy().into_owned())
         .ok_or_else(|| FsError::denied("That path does not name a file."))?;
-    let tmp = dir.join(format!(".{name}.serveros-tmp"));
+    let tmp = dir.join(temp_name(&name));
 
     let original = fs::symlink_metadata(target).ok().filter(|m| m.is_file());
 
-    let mut file = match OpenOptions::new().write(true).create_new(true).open(&tmp) {
-        Ok(f) => f,
-        Err(e) if e.kind() == io::ErrorKind::AlreadyExists => {
-            // A leftover temp file is the residue of a crashed write and has no
-            // value to anyone. Remove it and try exactly once more, so a
-            // genuine race still fails loudly instead of looping.
-            fs::remove_file(&tmp).map_err(|e| FsError::io(&tmp, e))?;
-            OpenOptions::new()
-                .write(true)
-                .create_new(true)
-                .open(&tmp)
-                .map_err(|e| FsError::io(&tmp, e))?
-        }
-        Err(e) => return Err(FsError::io(&tmp, e)),
-    };
+    // `create_new` on a name nothing else can produce. A collision here is not
+    // something to recover from — see `temp_name`.
+    let mut file = OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(&tmp)
+        .map_err(|e| FsError::io(&tmp, e))?;
 
     let finish = (|| -> Result<(), FsError> {
         fill(&mut file).map_err(|e| FsError::io(&tmp, e))?;
@@ -429,6 +421,32 @@ fn atomic_write(
         let _ = fs::remove_file(&tmp);
     }
     finish
+}
+
+/// A scratch name no other write can choose.
+///
+/// This used to be one fixed path, `.<name>.serveros-tmp`, with a branch that
+/// deleted an existing temp file and tried once more — on the theory that it
+/// could only be residue from a crashed write. Two saves of the same file at
+/// the same time proved otherwise: the second writer unlinked the first
+/// writer's file while it was still being written, and the first writer then
+/// renamed the second writer's half-finished temp into place. That is a
+/// corrupted config on someone's server because two clicks landed close
+/// together, which is not a trade anyone would accept.
+///
+/// So the name carries the process and a counter, and a collision — now
+/// impossible between live writers — is reported rather than cleaned up. The
+/// cost is that a process killed mid-write leaves a hidden file behind instead
+/// of having it reaped by the next save. A stray dotfile is a far smaller
+/// problem than a truncated one.
+fn temp_name(name: &str) -> String {
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static SEQUENCE: AtomicU64 = AtomicU64::new(0);
+    format!(
+        ".{name}.serveros-tmp.{}.{}",
+        std::process::id(),
+        SEQUENCE.fetch_add(1, Ordering::Relaxed)
+    )
 }
 
 /// Copy uid/gid from the file being replaced onto its replacement.
@@ -720,24 +738,46 @@ mod tests {
     }
 
     #[test]
-    fn write_recovers_from_a_stale_temp_file() {
+    fn a_stale_temp_file_does_not_block_a_write() {
+        // Residue from a crashed write is now ignored rather than deleted: the
+        // deleting version could not tell a crashed write from a live one, and
+        // removing a live one corrupted the file being saved. The leftover is
+        // left where it is — a stray dotfile is the price of never truncating
+        // someone's config.
         let t = TempDir::new("writestale");
+        let stale = t.path().join(".a.conf.serveros-tmp");
         fs::write(t.path().join("a.conf"), b"old").unwrap();
-        fs::write(t.path().join(".a.conf.serveros-tmp"), b"crashed write").unwrap();
+        fs::write(&stale, b"crashed write").unwrap();
+
         write_file(&policy(&t), &t.s("a.conf"), b"new").unwrap();
+
         assert_eq!(fs::read(t.path().join("a.conf")).unwrap(), b"new");
-        assert!(!t.path().join(".a.conf.serveros-tmp").exists());
+        assert_eq!(fs::read(&stale).unwrap(), b"crashed write", "untouched, not adopted");
     }
 
     #[test]
     fn write_keeps_the_old_file_intact_when_the_new_one_cannot_be_written() {
-        // A directory where the temp file would go makes the create fail.
+        // A name long enough that the file is legal but `.<name>.serveros-tmp…`
+        // exceeds NAME_MAX, so creating the temp fails. Checked this way rather
+        // than with permissions because the agent normally runs as root, and
+        // root is not stopped by a mode bit.
         let t = TempDir::new("writefail");
-        fs::write(t.path().join("a.conf"), b"precious").unwrap();
-        fs::create_dir(t.path().join(".a.conf.serveros-tmp")).unwrap();
-        let e = write_file(&policy(&t), &t.s("a.conf"), b"replacement").unwrap_err();
+        let name = "a".repeat(250) + ".conf";
+        fs::write(t.path().join(&name), b"precious").unwrap();
+
+        let e = write_file(&policy(&t), &t.s(&name), b"replacement").unwrap_err();
+
         assert_ne!(e.kind(), "already_exists");
-        assert_eq!(fs::read(t.path().join("a.conf")).unwrap(), b"precious");
+        assert_eq!(
+            fs::read(t.path().join(&name)).unwrap(),
+            b"precious",
+            "a write that cannot start must leave the original alone"
+        );
+    }
+
+    #[test]
+    fn two_writes_of_the_same_file_never_share_a_temp_name() {
+        assert_ne!(temp_name("a.conf"), temp_name("a.conf"));
     }
 
     #[test]

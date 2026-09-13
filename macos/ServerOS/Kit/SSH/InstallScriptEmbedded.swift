@@ -18,7 +18,7 @@ extension InstallScript {
 
     /// SHA-256 of the script this constant was generated from, so a mismatch
     /// is detectable rather than mysterious.
-    static let embeddedChecksum = "2325bbec87bda28ea2b9f59a920b8188b8ca71916b382f6974e300cc4156b50c"
+    static let embeddedChecksum = "e125f03d518ea1887ede7edff7f44c6868791cc07869acfeb298201258853a4b"
 
     /// The installer, compiled into the binary.
     ///
@@ -345,7 +345,23 @@ RestrictNamespaces=yes
 LockPersonality=yes
 MemoryDenyWriteExecute=yes
 SystemCallArchitectures=native
-CapabilityBoundingSet=
+
+# Read-only file access beyond what the agent owns.
+#
+# The agent runs as root, but with an otherwise-empty capability set — so plain
+# discretionary access control applies, and root that holds no capabilities
+# cannot read a file it does not own. That is what made ServerOS report
+# "Permission denied" when reading a user's 0600 ~/.ssh/authorized_keys, or a
+# config in another user's home: every one of those is exactly the kind of file
+# a server-management tool is expected to be able to look at.
+#
+# CAP_DAC_READ_SEARCH is the read-only bypass, and only that: it lets the agent
+# READ any file and traverse any directory, and confers no power to write,
+# change ownership, or alter anything. It is the smallest capability that makes
+# a read-only view of the machine actually work. Writing — creating users,
+# changing permissions — is the manage profile, which adds CAP_DAC_OVERRIDE on
+# top of this.
+CapabilityBoundingSet=CAP_DAC_READ_SEARCH
 AmbientCapabilities=
 
 [Install]
