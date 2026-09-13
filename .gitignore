@@ -17,3 +17,5 @@ build-status.txt
 .derived/
 # macOS
 .DS_Store
+config.bat
+node_modules

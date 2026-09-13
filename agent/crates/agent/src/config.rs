@@ -45,6 +45,17 @@ pub struct PostgresConfig {
     pub user: String,
     pub database: String,
     pub socket_dir: PathBuf,
+    /// A loopback TCP address to use *instead of* the socket.
+    ///
+    /// The socket is the better default — no TCP stack, no listener to
+    /// expose — but it is subject to `peer` authentication, which matches the
+    /// connecting process's OS user against the role name. The agent runs as
+    /// root, and its role is deliberately not root, so on a stock Ubuntu
+    /// `pg_hba.conf` (`local all all peer`) the socket can never work no matter
+    /// what password is set. TCP to 127.0.0.1 uses the `host` rules instead,
+    /// which are password-based and independent of which user the agent runs
+    /// as. `PgHost::Tcp` refuses any address that is not loopback.
+    pub host: Option<String>,
     pub port: u16,
     /// Password for the monitoring role, if the role needs one. Read from a
     /// separate file so it never appears in the config or in process listings.
@@ -58,6 +69,7 @@ impl Default for PostgresConfig {
             user: "serveros".into(),
             database: "postgres".into(),
             socket_dir: PathBuf::from("/var/run/postgresql"),
+            host: None,
             port: 5432,
             password_file: None,
         }
@@ -249,6 +261,9 @@ impl Config {
             if let Some(v) = pg.get("socket_dir").and_then(|v| v.as_str()) {
                 cfg.postgres.socket_dir = PathBuf::from(v);
             }
+            if let Some(v) = pg.get("host").and_then(|v| v.as_str()) {
+                cfg.postgres.host = Some(v.to_string());
+            }
             if let Some(v) = pg.get("port").and_then(|v| v.as_u64()) {
                 cfg.postgres.port = v.clamp(1, 65535) as u16;
             }
@@ -376,6 +391,31 @@ mod tests {
         assert_eq!(c.metrics_interval_secs, 5);
         assert!(!c.postgres.enabled);
         assert_eq!(c.postgres.port, 5433);
+    }
+
+    #[test]
+    fn postgres_host_is_read_and_defaults_to_the_socket() {
+        // The exact block ServerOS writes when it provisions database access.
+        // If this key is ever dropped, the agent silently falls back to the
+        // Unix socket, peer authentication rejects it, and the app reports
+        // "PostgreSQL rejected these credentials" with no way to tell why.
+        let c = Config::parse(
+            r#"{"postgres":{"enabled":true,"user":"serveros","host":"127.0.0.1",
+                "port":5432,"password_file":"/etc/serveros/postgres.pw"}}"#,
+        )
+        .unwrap();
+        assert_eq!(c.postgres.host.as_deref(), Some("127.0.0.1"));
+        assert_eq!(c.postgres.user, "serveros");
+        assert_eq!(
+            c.postgres.password_file.as_deref(),
+            Some(std::path::Path::new("/etc/serveros/postgres.pw"))
+        );
+
+        assert_eq!(
+            Config::parse("{}").unwrap().postgres.host,
+            None,
+            "a config without the key keeps the socket behaviour it always had"
+        );
     }
 
     #[test]

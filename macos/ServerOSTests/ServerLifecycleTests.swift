@@ -71,17 +71,17 @@ final class ServerLifecycleTests: XCTestCase {
                        "an offline server's one useful action is to try again")
     }
 
-    func testAnUnreachableServerIsStillInTheStore() throws {
+    func testAnUnreachableServerIsStillInTheStore() async throws {
         // Health is computed from the live session; the list is drawn from the
         // store. They are deliberately separate, and this is why: losing the
         // connection must not lose the server.
         let store = try makeStore()
-        try store.upsert(prod())
+        try await store.upsert(prod())
 
         let health = HealthEvaluator.evaluate(HealthInput(isReachable: false))
         XCTAssertEqual(health.state, .offline)
 
-        let listed = try store.all()
+        let listed = try await store.all()
         XCTAssertEqual(listed.count, 1, "an unreachable server vanished from the list")
         XCTAssertEqual(listed.first?.id, prod().id)
     }
@@ -98,24 +98,25 @@ final class ServerLifecycleTests: XCTestCase {
 
     // MARK: - Identity across reconnects
 
-    func testReconnectingKeepsTheSameServerIdentity() throws {
+    func testReconnectingKeepsTheSameServerIdentity() async throws {
         // The id is what the Keychain item, the audit trail and the agent's own
         // enrolment are all keyed on. A reconnect that minted a new one would
         // orphan all three.
         let store = try makeStore()
         let original = prod()
-        try store.upsert(original)
+        try await store.upsert(original)
 
         // A reconnect re-reads the summary and rebuilds the session around it.
-        let reloaded = try XCTUnwrap(try store.server(id: original.id))
+        let found = try await store.server(id: original.id)
+        let reloaded = try XCTUnwrap(found)
         XCTAssertEqual(reloaded.id, original.id)
         XCTAssertEqual(reloaded.agentPort, original.agentPort)
         XCTAssertEqual(reloaded.hostname, original.hostname)
     }
 
-    func testUpdatingASeenServerDoesNotChangeItsIdentityOrDuplicateIt() throws {
+    func testUpdatingASeenServerDoesNotChangeItsIdentityOrDuplicateIt() async throws {
         let store = try makeStore()
-        try store.upsert(prod())
+        try await store.upsert(prod())
 
         var seenLater = prod()
         seenLater = ServerSummary(
@@ -127,16 +128,16 @@ final class ServerLifecycleTests: XCTestCase {
             addedAt: seenLater.addedAt, tags: seenLater.tags,
             sortIndex: seenLater.sortIndex, isDemo: false
         )
-        try store.upsert(seenLater)
+        try await store.upsert(seenLater)
 
-        let all = try store.all()
+        let all = try await store.all()
         XCTAssertEqual(all.count, 1, "a later sighting created a second server")
         XCTAssertEqual(all.first?.id, prod().id)
     }
 
     // MARK: - Removal
 
-    func testRemovingAServerTakesItsCredentialWithIt() throws {
+    func testRemovingAServerTakesItsCredentialWithIt() async throws {
         let credentials = makeCredentials()
         let credential = ServerCredential(
             serverID: prod().id,
@@ -145,39 +146,47 @@ final class ServerLifecycleTests: XCTestCase {
         )
 
         do {
-            try credentials.save(credential)
+            try await credentials.save(credential)
         } catch {
             throw XCTSkip("No usable Keychain in this environment: \(error)")
         }
-        XCTAssertNotNil(try credentials.load(serverID: prod().id))
+        let stored = try await credentials.load(serverID: prod().id)
+        XCTAssertNotNil(stored)
 
         let store = try makeStore()
-        try store.upsert(prod())
+        try await store.upsert(prod())
 
         // What AppModel.remove does, in order.
-        try credentials.delete(serverID: prod().id)
-        try store.delete(id: prod().id)
+        try await credentials.delete(serverID: prod().id)
+        try await store.delete(id: prod().id)
 
-        XCTAssertNil(try credentials.load(serverID: prod().id),
+        let afterRemoval = try await credentials.load(serverID: prod().id)
+        XCTAssertNil(afterRemoval,
                      "the agent secret outlived the server it belonged to")
-        XCTAssertTrue(try store.all().isEmpty)
-        XCTAssertTrue(try makeStore().all().isEmpty, "it came back after a relaunch")
+        let remaining = try await store.all()
+        XCTAssertTrue(remaining.isEmpty)
+        let afterRelaunch = try await makeStore().all()
+        XCTAssertTrue(afterRelaunch.isEmpty, "it came back after a relaunch")
     }
 
-    func testRemovingAServerThatIsAlreadyGoneIsNotAnError() throws {
+    func testRemovingAServerThatIsAlreadyGoneIsNotAnError() async throws {
         // Removal runs after the UI has navigated away, and can be retried.
         let store = try makeStore()
-        try store.upsert(prod())
-        try store.delete(id: prod().id)
-        XCTAssertNoThrow(try store.delete(id: prod().id))
+        try await store.upsert(prod())
+        try await store.delete(id: prod().id)
+        // Deleting twice is not an error: removal runs after the UI has already
+        // navigated away, so it has to be safe to retry.
+        do { try await store.delete(id: prod().id) }
+        catch { XCTFail("deleting an already-deleted server threw: \(error)") }
 
         let credentials = makeCredentials()
-        XCTAssertNoThrow(try credentials.delete(serverID: "never-existed"))
+        do { try await credentials.delete(serverID: "never-existed") }
+        catch { XCTFail("deleting a credential that was never there threw: \(error)") }
     }
 
-    func testRemovingOneServerLeavesTheOthers() throws {
+    func testRemovingOneServerLeavesTheOthers() async throws {
         let store = try makeStore()
-        try store.upsert(prod())
+        try await store.upsert(prod())
 
         let staging = ServerSummary(
             id: "srv_staging", name: "Staging", hostname: "198.51.100.21",
@@ -185,24 +194,24 @@ final class ServerLifecycleTests: XCTestCase {
             osPretty: "Ubuntu 24.04.4 LTS", arch: "x86_64",
             lastSeenAt: Date(), addedAt: Date(), tags: [], sortIndex: 1, isDemo: false
         )
-        try store.upsert(staging)
-        try store.delete(id: prod().id)
+        try await store.upsert(staging)
+        try await store.delete(id: prod().id)
 
-        let remaining = try store.all()
+        let remaining = try await store.all()
         XCTAssertEqual(remaining.map(\.id), ["srv_staging"])
     }
 
     // MARK: - Demo and real never mix
 
-    func testDemoServersAndRealServersCoexistWithoutContaminatingEachOther() throws {
+    func testDemoServersAndRealServersCoexistWithoutContaminatingEachOther() async throws {
         // Demo mode must never make a real server look fake, or the reverse.
         let store = try makeStore()
-        try store.upsert(prod())
+        try await store.upsert(prod())
         for demo in DemoEnvironment.shared.servers {
-            try store.upsert(demo)
+            try await store.upsert(demo)
         }
 
-        let all = try store.all()
+        let all = try await store.all()
         let real = all.filter { !$0.isDemo }
         XCTAssertEqual(real.count, 1)
         XCTAssertEqual(real.first?.id, prod().id)

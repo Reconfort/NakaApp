@@ -24,6 +24,10 @@ echo "=== Swift: member resolution ==============================="
 python3 scripts/check-members.py | tail -4 || fail=1
 
 echo
+echo "=== Swift: access levels ==================================="
+python3 scripts/check-access.py | tail -4 || fail=1
+
+echo
 echo "=== Installer: script vs embedded copy ====================="
 python3 scripts/embed-install-script.py --check || fail=1
 
@@ -34,6 +38,10 @@ python3 scripts/check-wire-contract.py --quiet | tail -3 || fail=1
 echo
 echo "=== Swift ↔ agent wire types =========================="
 python3 scripts/check-wire-types.py | tail -3 || fail=1
+
+echo
+echo "=== PostgreSQL emit types (from agent source) =============="
+python3 scripts/check-pg-emit-types.py | tail -3 || fail=1
 
 echo
 echo "=== Safety: secrets in logs, demo vs real =================="

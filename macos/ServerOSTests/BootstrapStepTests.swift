@@ -145,6 +145,42 @@ final class BootstrapStepTests: XCTestCase {
         XCTAssertNil(empty.version)
     }
 
+    // MARK: - Waiting for the agent to actually answer
+    //
+    // `systemctl is-active` is true the instant the process is forked, which is
+    // before it has bound its socket. Everything that restarts the agent used
+    // to continue on that signal and then immediately try to talk to it, so the
+    // user got "ServerOS couldn't reach the agent" from an agent that was fine.
+
+    func testTheReadinessProbeAsksTheAgentRatherThanSystemd() {
+        let script = AgentBootstrap.waitUntilServingScript(privileged: "")
+        XCTAssertTrue(script.contains("\(AgentBootstrap.agentBinaryPath) status"),
+                      "the agent's own health check is the only signal that means 'serving'")
+        XCTAssertFalse(script.contains("is-active"),
+                       "is-active is the signal this replaced")
+        XCTAssertTrue(script.contains("serving=yes"), script)
+    }
+
+    func testTheReadinessProbeGivesUpAndShowsTheLog() {
+        let script = AgentBootstrap.waitUntilServingScript(privileged: "", attempts: 5)
+        XCTAssertTrue(script.contains("-lt 5"), "it must not loop forever")
+        XCTAssertTrue(script.contains("journalctl"), "a failure has to say why")
+        XCTAssertTrue(script.contains("serving=no"), script)
+    }
+
+    func testTheReadinessProbeSleepsInWholeSeconds() {
+        // POSIX `sleep` takes an integer. GNU and busybox accept fractions;
+        // dash on a minimal image does not, and the loop would spin.
+        let script = AgentBootstrap.waitUntilServingScript(privileged: "")
+        XCTAssertTrue(script.contains("sleep 1"), script)
+        XCTAssertFalse(script.contains("sleep 0."), script)
+    }
+
+    func testTheReadinessProbeCarriesSudoWhenTheAccountNeedsIt() {
+        let script = AgentBootstrap.waitUntilServingScript(privileged: "sudo -n ")
+        XCTAssertTrue(script.contains("sudo -n \(AgentBootstrap.agentBinaryPath) status"), script)
+    }
+
     // MARK: - Shell quoting
 
     func testShellQuotingSurvivesTheNamesPeopleGiveTheirMacs() {

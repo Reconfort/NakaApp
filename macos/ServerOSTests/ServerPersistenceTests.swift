@@ -74,40 +74,41 @@ final class ServerPersistenceTests: XCTestCase {
 
     // MARK: - The reported bug
 
-    func testAServerIsStillThereAfterNavigatingAwayAndReloading() throws {
+    func testAServerIsStillThereAfterNavigatingAwayAndReloading() async throws {
         let store = try makeStore()
-        try store.upsert(prod())
+        try await store.upsert(prod())
 
         // What the Servers screen does: ask the same store again.
-        let reloaded = try store.all()
+        let reloaded = try await store.all()
 
         XCTAssertEqual(reloaded.count, 1, "the server list came back empty")
         XCTAssertEqual(reloaded.first?.name, "Prod")
         XCTAssertEqual(reloaded.first?.id, "srv_8809a5eebdd4fc9")
     }
 
-    func testAServerSurvivesTheAppBeingClosedAndReopened() throws {
+    func testAServerSurvivesTheAppBeingClosedAndReopened() async throws {
         // Write with one container...
         let first = try makeStore()
-        try first.upsert(prod())
+        try await first.upsert(prod())
 
         // ...then throw it away, exactly as quitting the app does, and open the
         // same file again the way the next launch will.
         let second = try makeStore()
-        let afterRelaunch = try second.all()
+        let afterRelaunch = try await second.all()
 
         XCTAssertEqual(afterRelaunch.count, 1,
                        "the server did not survive a relaunch — the store is not durable")
         XCTAssertEqual(afterRelaunch.first?.name, "Prod")
     }
 
-    func testTheMetadataSetupCollectedIsSavedWithTheServer() throws {
+    func testTheMetadataSetupCollectedIsSavedWithTheServer() async throws {
         // The setup screen showed these. If they are not persisted, the server
         // detail screen has to re-derive them or show blanks.
         let store = try makeStore()
-        try store.upsert(prod())
+        try await store.upsert(prod())
 
-        let saved = try XCTUnwrap(try store.all().first)
+        let all = try await store.all()
+        let saved = try XCTUnwrap(all.first)
         XCTAssertEqual(saved.osPretty, "Ubuntu 24.04.4 LTS")
         XCTAssertEqual(saved.arch, "x86_64")
         XCTAssertEqual(saved.agentPort, 8723)
@@ -116,23 +117,26 @@ final class ServerPersistenceTests: XCTestCase {
         XCTAssertFalse(saved.isDemo)
     }
 
-    func testSettingUpTheSameServerTwiceDoesNotDuplicateIt() throws {
+    func testSettingUpTheSameServerTwiceDoesNotDuplicateIt() async throws {
         // Setup is idempotent, and the error message for a failed save says so.
         // That promise is only true if the store upserts.
         let store = try makeStore()
-        try store.upsert(prod())
-        try store.upsert(prod())
+        try await store.upsert(prod())
+        try await store.upsert(prod())
 
-        XCTAssertEqual(try store.all().count, 1, "re-running setup duplicated the server")
+        let count = try await store.all().count
+        XCTAssertEqual(count, 1, "re-running setup duplicated the server")
     }
 
-    func testRemovingAServerRemovesItFromDiskToo() throws {
+    func testRemovingAServerRemovesItFromDiskToo() async throws {
         let store = try makeStore()
-        try store.upsert(prod())
-        try store.delete(id: prod().id)
+        try await store.upsert(prod())
+        try await store.delete(id: prod().id)
 
-        XCTAssertTrue(try store.all().isEmpty)
-        XCTAssertTrue(try makeStore().all().isEmpty, "it came back after a relaunch")
+        let remaining = try await store.all()
+        XCTAssertTrue(remaining.isEmpty)
+        let afterRelaunch = try await makeStore().all()
+        XCTAssertTrue(afterRelaunch.isEmpty, "it came back after a relaunch")
     }
 
     // MARK: - The failure that was swallowed

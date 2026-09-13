@@ -204,9 +204,16 @@ public struct ErrorState: View {
                 }
             }
 
-            if showTechnical, let technical = error.technical {
+            if showTechnical {
                 ScrollView {
-                    Text(technical)
+                    // The build goes here rather than in the error itself:
+                    // `technical` is what went wrong, this is which copy of
+                    // ServerOS it went wrong in. A screenshot of this panel
+                    // identifies its own binary, which is worth a great deal
+                    // when the fix is already written but not yet running.
+                    Text([error.technical, "(\(ServerOSError.buildStamp))"]
+                            .compactMap { $0 }
+                            .joined(separator: "\n\n"))
                         .font(Typography.codeSmall)
                         .foregroundStyle(Palette.textSecondary)
                         .textSelection(.enabled)

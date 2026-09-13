@@ -217,63 +217,118 @@ public struct Chip: View {
 
 // MARK: - Buttons
 
+// Why every style below puts its body in a nested `View`
+//
+// `ButtonStyle` is not a `View`. `@Environment` and `@State` declared *on the
+// style* are therefore never installed in the view graph: they read their
+// default value once and never update. SwiftUI says so at runtime, in a line
+// that is easy to scroll past among macOS's own console noise —
+//
+//     Accessing Environment<Bool>'s value outside of being installed on a
+//     View. This will always read the default value and will not update.
+//
+// — and the consequence here was visible on every screen. `\.isEnabled`
+// defaults to `true`, so a disabled primary button was painted at full
+// strength and a disabled secondary one in full-contrast text: the app said
+// "you can press this" about buttons it had itself disabled. The hover
+// highlight on secondary buttons never worked either, for the same reason
+// applied to `@State`.
+//
+// A nested `View` is where those property wrappers work. It costs one
+// indirection and buys back the two features these styles claimed to have.
+//
+// The nested type is `StyledLabel`, not `Body`. `ButtonStyle` has an
+// associated type called `Body`, and a nested struct of that name becomes the
+// witness for it instead of the `some View` that `makeBody` returns — which
+// fails to compile with "does not conform to protocol 'ButtonStyle'" and
+// "struct 'Body' must be declared public", neither of which points at the
+// actual cause. Associated-type names are reserved ground inside a conforming
+// type.
+
 /// The one prominent action on a screen.
 public struct PrimaryButtonStyle: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
     public func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(Typography.body.weight(.medium))
-            .foregroundStyle(Palette.textOnAccent)
-            .padding(.horizontal, Spacing.group)
-            .padding(.vertical, Spacing.snug + 1)
-            .background(
-                Palette.accent.opacity(isEnabled ? (configuration.isPressed ? 0.78 : 1) : 0.4),
-                in: RoundedRectangle(cornerRadius: Radius.medium, style: .continuous)
-            )
-            .contentShape(RoundedRectangle(cornerRadius: Radius.medium, style: .continuous))
-            .animation(Motion.immediate, value: configuration.isPressed)
+        StyledLabel(configuration: configuration)
+    }
+
+    private struct StyledLabel: View {
+        let configuration: ButtonStyleConfiguration
+        @Environment(\.isEnabled) private var isEnabled
+
+        var body: some View {
+            configuration.label
+                .font(Typography.body.weight(.medium))
+                .foregroundStyle(Palette.textOnAccent)
+                .padding(.horizontal, Spacing.group)
+                .padding(.vertical, Spacing.snug + 1)
+                .background(
+                    Palette.accent.opacity(isEnabled ? (configuration.isPressed ? 0.78 : 1) : 0.4),
+                    in: RoundedRectangle(cornerRadius: Radius.medium, style: .continuous)
+                )
+                .contentShape(RoundedRectangle(cornerRadius: Radius.medium, style: .continuous))
+                .animation(Motion.immediate, value: configuration.isPressed)
+        }
     }
 }
 
 /// Everything else.
 public struct SecondaryButtonStyle: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
-    @State private var isHovered = false
-
     public func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(Typography.body)
-            .foregroundStyle(isEnabled ? Palette.textPrimary : Palette.textMuted)
-            .padding(.horizontal, Spacing.group)
-            .padding(.vertical, Spacing.snug + 1)
-            .background(
-                (configuration.isPressed ? Palette.hoverFill : (isHovered ? Palette.hoverFill.opacity(0.6) : Color.clear)),
-                in: RoundedRectangle(cornerRadius: Radius.medium, style: .continuous)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: Radius.medium, style: .continuous)
-                    .strokeBorder(Palette.divider, lineWidth: 0.5)
-            )
-            .contentShape(RoundedRectangle(cornerRadius: Radius.medium, style: .continuous))
-            .onHover { hovering in withAnimation(Motion.immediate) { isHovered = hovering } }
+        StyledLabel(configuration: configuration)
+    }
+
+    private struct StyledLabel: View {
+        let configuration: ButtonStyleConfiguration
+        @Environment(\.isEnabled) private var isEnabled
+        @State private var isHovered = false
+
+        var body: some View {
+            configuration.label
+                .font(Typography.body)
+                .foregroundStyle(isEnabled ? Palette.textPrimary : Palette.textMuted)
+                .padding(.horizontal, Spacing.group)
+                .padding(.vertical, Spacing.snug + 1)
+                .background(
+                    (configuration.isPressed ? Palette.hoverFill : (isHovered ? Palette.hoverFill.opacity(0.6) : Color.clear)),
+                    in: RoundedRectangle(cornerRadius: Radius.medium, style: .continuous)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: Radius.medium, style: .continuous)
+                        .strokeBorder(Palette.divider, lineWidth: 0.5)
+                )
+                .contentShape(RoundedRectangle(cornerRadius: Radius.medium, style: .continuous))
+                // Hover is not offered on a button that cannot be pressed.
+                .onHover { hovering in
+                    guard isEnabled else { return }
+                    withAnimation(Motion.immediate) { isHovered = hovering }
+                }
+        }
     }
 }
 
 /// Visually distinct, because the brief requires destructive actions to look
 /// different from ordinary ones before they are pressed, not only after.
 public struct DestructiveButtonStyle: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
     public func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(Typography.body.weight(.medium))
-            .foregroundStyle(Palette.textOnAccent)
-            .padding(.horizontal, Spacing.group)
-            .padding(.vertical, Spacing.snug + 1)
-            .background(
-                Palette.critical.opacity(isEnabled ? (configuration.isPressed ? 0.78 : 1) : 0.4),
-                in: RoundedRectangle(cornerRadius: Radius.medium, style: .continuous)
-            )
-            .animation(Motion.immediate, value: configuration.isPressed)
+        StyledLabel(configuration: configuration)
+    }
+
+    private struct StyledLabel: View {
+        let configuration: ButtonStyleConfiguration
+        @Environment(\.isEnabled) private var isEnabled
+
+        var body: some View {
+            configuration.label
+                .font(Typography.body.weight(.medium))
+                .foregroundStyle(Palette.textOnAccent)
+                .padding(.horizontal, Spacing.group)
+                .padding(.vertical, Spacing.snug + 1)
+                .background(
+                    Palette.critical.opacity(isEnabled ? (configuration.isPressed ? 0.78 : 1) : 0.4),
+                    in: RoundedRectangle(cornerRadius: Radius.medium, style: .continuous)
+                )
+                .animation(Motion.immediate, value: configuration.isPressed)
+        }
     }
 }
 
