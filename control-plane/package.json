@@ -9,9 +9,9 @@
     "node": ">=24.0.0"
   },
   "scripts": {
-    "build": "node init && prisma generate && nest build",
-    "start": "node init && node dist/main.js",
-    "start:dev": "node init && nest start --watch",
+    "build": "prisma generate && nest build",
+    "start": "node dist/main.js",
+    "start:dev": "nest start --watch",
     "test": "bash scripts/test.sh",
     "test:logic": "bash scripts/test.sh",
     "typecheck": "tsc -p tsconfig.json",
